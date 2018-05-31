@@ -1,7 +1,7 @@
 #include "mpu9250.h"
 #include "stm32f10x_flash.h"//flash操作接口文件（在库文件中），必须要包含
 #include "FLASH.h"
-
+#include "imu.h"
 union {
 float Bit32;
 unsigned char Bit8[4];
@@ -14,7 +14,7 @@ unsigned char Bit8[4];
 *E-Mail:	fanwenjingnihao@163.com
 *Other:		该程序不能直接编译运行，只包含了Flash读写操作
 ****************************************************************/
-#define  STARTADDR  0x08010000                   	 //STM32F103RB 其他型号基本适用，未测试
+#define  STARTADDR  0x0801F000                   	 //STM32F103RB 其他型号基本适用，未测试
 //#define  STARTADDR  0x08040000//0x080350A8
 volatile FLASH_Status FLASHStatus = FLASH_COMPLETE;      //Flash操作状态变量
 /****************************************************************
@@ -156,6 +156,18 @@ u8 Parameter_Init(void)
                          &mpu6050_fc.Gyro_Offset.x,
                          &mpu6050_fc.Gyro_Offset.y,
                          &mpu6050_fc.Gyro_Offset.z);
+	
+	  ReadFlashThreeFloat(Gyro_Offset_Address,
+                         &mpu6050_fc.Gyro_Offset.x,
+                         &mpu6050_fc.Gyro_Offset.y,
+                         &mpu6050_fc.Gyro_Offset.z);
+	
+	  ReadFlashThreeFloat(Mag_Offset_Address,
+                         &off_att[0],
+                         &off_att[1],
+                         &off_att[1]);
+	
+	
 }
 
 void WRITE_PARM(void){
@@ -166,7 +178,7 @@ WriteFlashNineFloat(Accel_Offset_Address,
                         mpu6050_fc.Gyro_Offset.x,
                         mpu6050_fc.Gyro_Offset.y,
                         mpu6050_fc.Gyro_Offset.z,
-                        0,
-                        0,
-                        0);//写入加速度零点偏执与磁力计中心偏执
+                        off_att[0],
+                        off_att[1],
+                        off_att[1]);//写入加速度零点偏执与磁力计中心偏执
 }

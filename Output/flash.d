@@ -16,3 +16,4 @@
 ..\..\Output\flash.o: ..\..\User\usart\spi.h
 ..\..\Output\flash.o: ..\..\Libraries\FWlib\inc\stm32f10x_flash.h
 ..\..\Output\flash.o: ..\..\User\FLASH.h
+..\..\Output\flash.o: ..\..\User\imu.h

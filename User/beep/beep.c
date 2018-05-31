@@ -1,6 +1,7 @@
 #include   "beep.h"
 #include   "time.h"
 #include   "head.h"
+#include   "rc_mine.h"
 #include   "delay.h"
 u8 start_music[]={
  11,21, 12,21, 13,21, 14,21, 15,21, 16,21, 
@@ -119,7 +120,8 @@ void Play_Music_Task(u8 sel,float dt)//<-----------------
 		Play_Music_In_Task(bat_error_music,0,sizeof(bat_error_music)/2,1,dt);		
 		break;
 		case RC_ERO_BEEP:
-		  //Play_Music_In_Task(rc_error_music,0,sizeof(rc_error_music)/2,1,dt);		
+			if(plane.mode==3||plane.mode==5)
+		    Play_Music_In_Task(rc_error_music,0,sizeof(rc_error_music)/2,1,dt);		
 		break;
 		default:
 			Tone(0,0);

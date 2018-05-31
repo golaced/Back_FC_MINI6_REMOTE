@@ -1,7 +1,7 @@
  #include "adc.h"
  #include "mymath.h"
 
-#define ADC_SAMPLE_NUM	10
+#define ADC_SAMPLE_NUM	20
 
 u16 adc_value[5*ADC_SAMPLE_NUM];//ADC采集值存放缓冲区
  
@@ -56,11 +56,11 @@ void Adc_Init(void)
 	
 	RCC_ADCCLKConfig(RCC_PCLK2_Div6); //设置ADC分频因子6 72M/6=12,ADC最大时间不能超过14M
 	//配置连续转换通道，55.5个采样周期
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_239Cycles5);	//1个通道转换一次耗时21us 4个通道
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 2, ADC_SampleTime_239Cycles5);	//采样个数ADC_SAMPLE_NUM
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 3, ADC_SampleTime_239Cycles5);	//总共耗时4*21*ADC_SAMPLE_NUM（64）=5.4ms<10ms
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 4, ADC_SampleTime_239Cycles5);
-	ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 5, ADC_SampleTime_239Cycles5);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_71Cycles5);	//1个通道转换一次耗时21us 4个通道
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 2, ADC_SampleTime_71Cycles5);	//采样个数ADC_SAMPLE_NUM
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_2, 3, ADC_SampleTime_71Cycles5);	//总共耗时4*21*ADC_SAMPLE_NUM（64）=5.4ms<10ms
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_8, 4, ADC_SampleTime_71Cycles5);
+	ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 5, ADC_SampleTime_71Cycles5);
 	
 	ADC_ResetCalibration(ADC1);	//使能复位校准  
 	while(ADC_GetResetCalibrationStatus(ADC1));	//等待复位校准结束
@@ -71,13 +71,73 @@ void Adc_Init(void)
 	ADC_SoftwareStartConvCmd(ADC1, ENABLE);		//使能指定的ADC1的软件转换启动功能
   
 	test=getAdcValue(0);
-	for(test=0;test<3*ADC_SAMPLE_NUM;test++){
+	for(test=0;test<10*ADC_SAMPLE_NUM;test++){
 	delay_ms(5);
 	rc_init[0]=getAdcValue(ADC_THRUST);
 	rc_init[1]=getAdcValue(ADC_YAW);
 	}
-}				  
+}				 
+
+
+void  Adc_Init1(void)
+{   u16 test;	 
+	ADC_InitTypeDef ADC_InitStructure; 
+	GPIO_InitTypeDef GPIO_InitStructure;
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA|RCC_APB2Periph_GPIOB,ENABLE);//使能GPIOA时钟
+	RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1,ENABLE);//使ADC1时钟
+	RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);//使能DMA时钟
+	RCC_ADCCLKConfig(RCC_PCLK2_Div6);   //设置ADC分频因子6 72M/6=12,ADC最大时间不能超过14M
+
+	//PA0\1\2 作为模拟通道输入引脚                         
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1|GPIO_Pin_2;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AIN;		//模拟输入引脚
+	GPIO_Init(GPIOA, &GPIO_InitStructure);
+	//PB0\1 作为模拟通道输入引脚 
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0|GPIO_Pin_1;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
+
+	ADC_DeInit(ADC1);  //复位ADC1,将外设 ADC1 的全部寄存器重设为缺省值
+
+	ADC_InitStructure.ADC_Mode = ADC_Mode_Independent;	//ADC工作模式:ADC1和ADC2工作在独立模式
+	ADC_InitStructure.ADC_ScanConvMode = DISABLE;	//模数转换工作在单通道模式
+	ADC_InitStructure.ADC_ContinuousConvMode = DISABLE;	//模数转换工作在单次转换模式
+	ADC_InitStructure.ADC_ExternalTrigConv = ADC_ExternalTrigConv_None;	//转换由软件而不是外部触发启动
+	ADC_InitStructure.ADC_DataAlign = ADC_DataAlign_Right;	//ADC数据右对齐
+	ADC_InitStructure.ADC_NbrOfChannel = 1;	//顺序进行规则转换的ADC通道的数目
+	ADC_Init(ADC1, &ADC_InitStructure);	//根据ADC_InitStruct中指定的参数初始化外设ADCx的寄存器   
+
+  
+	ADC_Cmd(ADC1, ENABLE);	//使能指定的ADC1
+	
+	ADC_ResetCalibration(ADC1);	//使能复位校准  
+	 
+	while(ADC_GetResetCalibrationStatus(ADC1));	//等待复位校准结束
+	
+	ADC_StartCalibration(ADC1);	 //开启AD校准
  
+	while(ADC_GetCalibrationStatus(ADC1));	 //等待校准结束
+
+//	ADC_SoftwareStartConvCmd(ADC1, ENABLE);		//使能指定的ADC1的软件转换启动功能
+	for(test=0;test<10*ADC_SAMPLE_NUM;test++){
+	delay_ms(5);
+	rc_init[0]=getAdcValue1(ADC_THRUST);
+	rc_init[1]=getAdcValue1(ADC_YAW);
+	}
+}		
+
+ u16 Get_Adc(u8 ch)   
+{
+  	//设置指定ADC的规则组通道，一个序列，采样时间
+	ADC_RegularChannelConfig(ADC1, ch, 1, ADC_SampleTime_239Cycles5 );	//ADC1,ADC通道,采样时间为239.5周期	  			    
+  
+	ADC_SoftwareStartConvCmd(ADC1, ENABLE);		//使能指定的ADC1的软件转换启动功能	
+	 
+	while(!ADC_GetFlagStatus(ADC1, ADC_FLAG_EOC ));//等待转换结束
+
+	return ADC_GetConversionValue(ADC1);	//返回最近一次ADC1规则组的转换结果
+}
+
+
 //ADC均值滤波
 void ADC_Filter(u16* adc_val)
 {
@@ -100,6 +160,16 @@ void ADC_Filter(u16* adc_val)
 }
 
 
+u16 getAdcValue1(uint8_t axis)
+{ uint8_t i=0;
+	u32 sum=0;
+	for( i=0;i<ADC_SAMPLE_NUM;i++)
+	{
+		sum += Get_Adc(axis);
+	}
+	return sum/ADC_SAMPLE_NUM;
+}
+
 u16 getAdcValue(uint8_t axis)
 { uint8_t i=0;
 	u32 sum=0;
@@ -113,13 +183,17 @@ u16 getAdcValue(uint8_t axis)
 joystickFlyui16_t adc_rc;
 /*获取摇杆ADC值*/
 int rc_off[2]={0};
-float k_bat=0.04;
+float k_bat=0.0016;
+float k_t=1;
 void getFlyDataADCValue(void)
 {
-	adc_rc.thrust = (LIMIT(getAdcValue(ADC_THRUST)-rc_off[0],0,4096)-rc_init[0])/4096.*1000+1500;
+	float temp=fabs(2048-rc_init[0]);
+	
+	//k_t=2048./temp*2;
+	adc_rc.thrust = (LIMIT(getAdcValue(ADC_THRUST)-rc_off[0],0,4096)-rc_init[0])/4096.*1000*k_t+1500;
 	adc_rc.yaw = (LIMIT(getAdcValue(ADC_YAW)-rc_off[1],0,4096)-rc_init[1])/4096.*1000+1500;
-	adc_rc.bat = getAdcValue(ADC_BAT);
-	adc_rc.bat_percent=LIMIT(LIMIT(adc_rc.bat,0,4096)*k_bat,0,99);
+	adc_rc.bat = getAdcValue(ADC_BAT)*k_bat;
+	adc_rc.bat_percent=LIMIT((adc_rc.bat-1*3.65)/(4.2-1*3.65),0,0.99)*100;	
 }
 
 

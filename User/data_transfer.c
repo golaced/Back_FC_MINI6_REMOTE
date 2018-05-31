@@ -180,7 +180,7 @@ void ANO_DT_Data_Exchange(void)
 								            DEBUG[6],DEBUG[7],DEBUG[8]);
 
 		 }else {sel[0]=0; 
-		  ANO_DT_Send_RCData(CH[2],CH[3],CH[0],CH[1],CH[4],CH[5],CH[6],CH[7],0 +1500,0 +1500);
+		  ANO_DT_Send_RCData(CH[2]+1500,CH[3]+1500,CH[0]+1500,CH[1]+1500,CH[4]+1500,CH[5]+1500,CH[6]+1500,CH[7]+1500,0 +1500,0 +1500);
 		 }
 	
 		 
@@ -193,14 +193,11 @@ void ANO_DT_Data_Exchange(void)
 		 ANO_DT_Send_Speed(plane.spd[0]*1000,plane.spd[1]*1000,plane.spd[2]*1000);
 			 }
 		 else{sel[1]=0;
-// 		 if(mode_oldx.show_qr_origin||1)
-//      ANO_DT_Send_QR1(ABS(x-off_flow_pos[X]-pos_off[X]),ABS(y-off_flow_pos[Y]-pos_off[Y]),z);
-//      else		
-// 	   ANO_DT_Send_QR1(ABS(POS_UKF_X-off_flow_pos[X]-pos_off[X]),ABS(-POS_UKF_Y-off_flow_pos[Y]-pos_off[Y]),ALT_POS_SONAR2);
-// 			 if(mode_oldx.flow_hold_position==0&&NS==2)
+	   ANO_DT_Send_QR1((plane.pos[0]-pos_off[0]),(plane.pos[1]-pos_off[1]),plane.pos[2]);
+// 			 if(NS==2)
 // 			 {
-// 				pos_off[X]=plane.pos[0];
-// 				pos_off[Y]=plane.pos[1];
+// 				pos_off[0]=plane.pos[0];
+// 				pos_off[1]=plane.pos[1];
 // 			 }			 
 		 }
 		 
@@ -208,7 +205,7 @@ void ANO_DT_Data_Exchange(void)
 	  break;
 	 case 2:
 		if(sel[2]==0){sel[2]=1;		
-			//ANO_DT_Send_Senser2(baro.h_flt*100,ALT_POS_SONAR2*100);//原始数据
+			ANO_DT_Send_Senser2(0,plane.pos[2]*100);//原始数据
 			}else if(sel[2]==1){sel[2]=2;	 
 			ANO_DT_Send_Senser( DEBUG[0],DEBUG[1],DEBUG[2],
 										       	DEBUG[3],DEBUG[4],DEBUG[5],
@@ -256,7 +253,7 @@ void ANO_DT_Data_Exchange(void)
 		else if(sel[3]==4){sel[3]=5;//					 Pos spd fp  Pos acc
 		ANO_DT_Send_PID(5,plane.PID_RX[12][0],plane.PID_RX[12][1],plane.PID_RX[12][2],
 											plane.PID_RX[13][0],plane.PID_RX[13][1],plane.PID_RX[13][2],
-											plane.PID_RX[4][0],plane.PID_RX[14][1],plane.PID_RX[14][2]);								
+											plane.PID_RX[14][0],plane.PID_RX[14][1],plane.PID_RX[14][2]);								
 		}
 		else {sel[3]=0;
 		ANO_DT_Send_PID(6,plane.PID_RX[15][0],plane.PID_RX[15][1],plane.PID_RX[15][2],
@@ -377,7 +374,7 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 	if(*(data_buf+2)==0X02)
 	{
 		if(*(data_buf+4)==0X01)
-		{
+		{ plane.read_pid=1;
 			f.send_pid1 = 1;
 			f.send_pid2 = 1;
 			f.send_pid3 = 1;
@@ -400,7 +397,7 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 	}
 	
 	if(*(data_buf+2)==0X10)								//PID1 att in
-    {
+    {  
        plane.PID[0][0]  = ( (vs16)(*(data_buf+4)<<8)|*(data_buf+5) );
        plane.PID[0][1]  =( (vs16)(*(data_buf+6)<<8)|*(data_buf+7) );
        plane.PID[0][2]  =( (vs16)(*(data_buf+8)<<8)|*(data_buf+9) );
@@ -500,8 +497,9 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
        plane.PID[17][0]  =( (vs16)(*(data_buf+16)<<8)|*(data_buf+17) );
        plane.PID[17][1]  =( (vs16)(*(data_buf+18)<<8)|*(data_buf+19) );
        plane.PID[17][2]  =( (vs16)(*(data_buf+20)<<8)|*(data_buf+21) );
+		   send_pid=1;
 		if(f.send_check == 0)
-		{
+		{ 
 			f.send_check = 1;
 			checkdata_to_send = *(data_buf+2);
 			checksum_to_send = sum;
@@ -859,31 +857,31 @@ void ANO_DT_Send_PID(u8 group,float p1_p,float p1_i,float p1_d,float p2_p,float 
 	data_to_send[_cnt++]=0;
 	
 	
-	_temp = p1_p * 1000;
+	_temp = p1_p * 1;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = p1_i  * 1000;
+	_temp = p1_i  * 1;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = p1_d  * 1000;
+	_temp = p1_d  * 1;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = p2_p  * 1000;
+	_temp = p2_p  * 1;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = p2_i  * 1000;
+	_temp = p2_i  * 1;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = p2_d  * 1000;
+	_temp = p2_d  * 1;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = p3_p  * 1000;
+	_temp = p3_p  * 1;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = p3_i  * 1000;
+	_temp = p3_i  * 1;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
-	_temp = p3_d  * 1000;
+	_temp = p3_d  * 1;
 	data_to_send[_cnt++]=BYTE1(_temp);
 	data_to_send[_cnt++]=BYTE0(_temp);
 	

@@ -29,6 +29,12 @@ typedef unsigned short      u16;
 #define  False 0
 
 
+typedef struct 
+{ 
+	u8 nrf,acc,gyro,hml;
+}MODULE;
+extern MODULE module;
+
 enum
 {
 	SETBIT0 = 0x0001,  SETBIT1 = 0x0002,	SETBIT2 = 0x0004,	 SETBIT3 = 0x0008,

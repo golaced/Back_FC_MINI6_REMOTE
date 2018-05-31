@@ -60,6 +60,12 @@ u8 temp;
 		plane.pos[1]= (float)((vs16)(NRF24L01_RXDATA[15]<<8)|NRF24L01_RXDATA[16])/100.;
 		plane.pos[2]= (float)((vs16)(NRF24L01_RXDATA[17]<<8)|NRF24L01_RXDATA[18])/100.;
 		plane.gps_sv=NRF24L01_RXDATA[19];
+		plane.lock= NRF24L01_RXDATA[20];
+		plane.mode= NRF24L01_RXDATA[21];
+		plane.state_v= NRF24L01_RXDATA[22];
+		plane.acc3d_step= NRF24L01_RXDATA[23];
+		plane.bat=(vs16)(NRF24L01_RXDATA[24]<<8)|NRF24L01_RXDATA[25];
+		plane.pos_sensor_state=NRF24L01_RXDATA[26];
   }
 	else if(NRF24L01_RXDATA[0]==0x02)//send2								
 	{ 
@@ -80,11 +86,8 @@ u8 temp;
   }
 		else if(NRF24L01_RXDATA[0]==0x03)//send3								
 	{ 
-		plane.lock= NRF24L01_RXDATA[1];
-		plane.mode= NRF24L01_RXDATA[2];
-		plane.state_v= NRF24L01_RXDATA[3];
-		plane.acc3d_step= NRF24L01_RXDATA[4];
-		plane.bat=(vs16)(NRF24L01_RXDATA[5]<<8)|NRF24L01_RXDATA[6];
+
+		
 		plane.PID_RX[0][0]= (vs16)(NRF24L01_RXDATA[7]<<8)|NRF24L01_RXDATA[8];
 		plane.PID_RX[0][1]= (vs16)(NRF24L01_RXDATA[9]<<8)|NRF24L01_RXDATA[10];
 		plane.PID_RX[0][2]= (vs16)(NRF24L01_RXDATA[11]<<8)|NRF24L01_RXDATA[12];
@@ -126,21 +129,21 @@ u8 temp;
   }
 		else if(NRF24L01_RXDATA[0]==0x05)//send5								
 	{ 
-		plane.PID_RX[9][0]= (vs16)(NRF24L01_RXDATA[7]<<8)|NRF24L01_RXDATA[8];
-		plane.PID_RX[9][1]= (vs16)(NRF24L01_RXDATA[9]<<8)|NRF24L01_RXDATA[10];
-		plane.PID_RX[9][2]= (vs16)(NRF24L01_RXDATA[11]<<8)|NRF24L01_RXDATA[12];
+		plane.PID_RX[9][0]= (vs16)(NRF24L01_RXDATA[1]<<8)|NRF24L01_RXDATA[2];
+		plane.PID_RX[9][1]= (vs16)(NRF24L01_RXDATA[3]<<8)|NRF24L01_RXDATA[4];
+		plane.PID_RX[9][2]= (vs16)(NRF24L01_RXDATA[5]<<8)|NRF24L01_RXDATA[6];
 		
-		plane.PID_RX[10][0]= (vs16)(NRF24L01_RXDATA[13]<<8)|NRF24L01_RXDATA[14];
-		plane.PID_RX[10][1]= (vs16)(NRF24L01_RXDATA[15]<<8)|NRF24L01_RXDATA[16];
-		plane.PID_RX[10][2]= (vs16)(NRF24L01_RXDATA[17]<<8)|NRF24L01_RXDATA[18];
+		plane.PID_RX[10][0]= (vs16)(NRF24L01_RXDATA[7]<<8)|NRF24L01_RXDATA[8];
+		plane.PID_RX[10][1]= (vs16)(NRF24L01_RXDATA[9]<<8)|NRF24L01_RXDATA[10];
+		plane.PID_RX[10][2]= (vs16)(NRF24L01_RXDATA[11]<<8)|NRF24L01_RXDATA[12];
 
-		plane.PID_RX[11][0]= (vs16)(NRF24L01_RXDATA[19]<<8)|NRF24L01_RXDATA[20];
-		plane.PID_RX[11][1]= (vs16)(NRF24L01_RXDATA[21]<<8)|NRF24L01_RXDATA[22];
-		plane.PID_RX[11][2]= (vs16)(NRF24L01_RXDATA[23]<<8)|NRF24L01_RXDATA[24];
+		plane.PID_RX[11][0]= (vs16)(NRF24L01_RXDATA[13]<<8)|NRF24L01_RXDATA[14];
+		plane.PID_RX[11][1]= (vs16)(NRF24L01_RXDATA[15]<<8)|NRF24L01_RXDATA[16];
+		plane.PID_RX[11][2]= (vs16)(NRF24L01_RXDATA[17]<<8)|NRF24L01_RXDATA[18];
 
-		plane.PID_RX[12][0]= (vs16)(NRF24L01_RXDATA[25]<<8)|NRF24L01_RXDATA[26];
-		plane.PID_RX[12][1]= (vs16)(NRF24L01_RXDATA[27]<<8)|NRF24L01_RXDATA[28];
-		plane.PID_RX[12][2]= (vs16)(NRF24L01_RXDATA[29]<<8)|NRF24L01_RXDATA[30];
+		plane.PID_RX[12][0]= (vs16)(NRF24L01_RXDATA[19]<<8)|NRF24L01_RXDATA[20];
+		plane.PID_RX[12][1]= (vs16)(NRF24L01_RXDATA[21]<<8)|NRF24L01_RXDATA[22];
+		plane.PID_RX[12][2]= (vs16)(NRF24L01_RXDATA[23]<<8)|NRF24L01_RXDATA[24];
   }
 	else if(NRF24L01_RXDATA[0]==0x06)//send6								
 	{ 
@@ -266,6 +269,15 @@ void NRF_Send_RC(void)//????
 
   NRF24L01_TXDATA[cnt++] = key_o[4]<<4|key_o[3]<<3|key_o[2]<<2|key_o[1]<<1|key_o[0];
 	NRF24L01_TXDATA[cnt++] = plane.acc_3d_cal<<2|plane.acc_cal<<1|plane.gyro_cal;
+	if(plane.acc_cal)
+		plane.acc_cal=0;
+	if(plane.gyro_cal)
+		plane.gyro_cal=0;
+	NRF24L01_TXDATA[cnt++] = plane.read_pid;
+	if(plane.read_pid)
+		plane.read_pid=0;
+	
+	
 	for(i=0;i<31;i++)
 		sum += NRF24L01_TXDATA[i];
 	NRF24L01_TXDATA[31] = sum;
@@ -282,7 +294,7 @@ void NRF_Send_PID1(void)
 	u8 cnt=0;
   u8 sum = 0;
 	NRF24L01_TXDATA[cnt++] = 0x02;
-	for(i=0;i<4;i++){
+	for(i=0;i<5;i++){
 		for(j=0;j<3;j++){
 			NRF24L01_TXDATA[cnt++] = BYTE1(plane.PID[i][j]);
 			NRF24L01_TXDATA[cnt++] = BYTE0(plane.PID[i][j]);
@@ -303,7 +315,7 @@ void NRF_Send_PID2(void)
 	u8 cnt=0;
   u8 sum = 0;
 	NRF24L01_TXDATA[cnt++] = 0x03;
-	for(i=4;i<9;i++){
+	for(i=5;i<10;i++){
 		for(j=0;j<3;j++){
 			NRF24L01_TXDATA[cnt++] = BYTE1(plane.PID[i][j]);
 			NRF24L01_TXDATA[cnt++] = BYTE0(plane.PID[i][j]);
@@ -324,7 +336,7 @@ void NRF_Send_PID3(void)
 	u8 cnt=0;
   u8 sum = 0;
 	NRF24L01_TXDATA[cnt++] = 0x04;
-	for(i=9;i<14;i++){
+	for(i=10;i<15;i++){
 		for(j=0;j<3;j++){
 			NRF24L01_TXDATA[cnt++] = BYTE1(plane.PID[i][j]);
 			NRF24L01_TXDATA[cnt++] = BYTE0(plane.PID[i][j]);
@@ -345,7 +357,7 @@ void NRF_Send_PID4(void)
 	u8 cnt=0;
   u8 sum = 0;
 	NRF24L01_TXDATA[cnt++] = 0x05;
-	for(i=14;i<18;i++){
+	for(i=15;i<18;i++){
 		for(j=0;j<3;j++){
 			NRF24L01_TXDATA[cnt++] = BYTE1(plane.PID[i][j]);
 			NRF24L01_TXDATA[cnt++] = BYTE0(plane.PID[i][j]);
@@ -363,7 +375,7 @@ void RC_Send_Task(void)
 {
 static u16 cnt[4]={0,0,0,0};
 static u8 pid_flag=0;
-	NRF_Send_RC();
+	
 
 	if(cnt[0]++>2-1){
 	 cnt[0]=0;	
@@ -384,10 +396,11 @@ static u8 pid_flag=0;
 		cnt[1]++;
     }
 		
-		if(cnt[1]>10){cnt[1]=0;
+		if(cnt[1]>5){cnt[1]=0;
 		send_pid=0;	
 		}
-	}
+	}else 
+	NRF_Send_RC();
 }
 
 

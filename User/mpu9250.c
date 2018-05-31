@@ -80,19 +80,20 @@ uint8_t Mpu9250_Init(void)
 		
 		
 		
-//		MPU92_Mag_WriteReg(AK8963_CNTL2,0x01); // Reset AK8963
-//		Delay_us(DELAY);
-//		MPU92_Mag_WriteReg(AK8963_CNTL1,0x00); //Power-down mode
-//		Delay_us(DELAY);
-//		MPU92_Mag_WriteReg(AK8963_CNTL1,0x0F); //Fuse ROM access mode  	
-//		Delay_us(DELAY);
-//		MPU92_Mag_WriteReg(AK8963_CNTL1,0x00); //Power-down mode
-//		Delay_us(DELAY);
-//		MPU92_Mag_WriteReg(AK8963_CNTL1,0x06);//0x06 0x16); // use i2c to set AK8963 working on Continuous measurement mode1 & 16-bit output	
-//		Delay_us(DELAY);
+		MPU92_Mag_WriteReg(AK8963_CNTL2,0x01); // Reset AK8963
+		delay_us(DELAY);
+		MPU92_Mag_WriteReg(AK8963_CNTL1,0x00); //Power-down mode
+		delay_us(DELAY);
+		MPU92_Mag_WriteReg(AK8963_CNTL1,0x0F); //Fuse ROM access mode  	
+		delay_us(DELAY);
+		MPU92_Mag_WriteReg(AK8963_CNTL1,0x00); //Power-down mode
+		delay_us(DELAY);
+		MPU92_Mag_WriteReg(AK8963_CNTL1,0x06);//0x06 0x16); // use i2c to set AK8963 working on Continuous measurement mode1 & 16-bit output	
+		delay_us(DELAY);
 		
 		//printf("AK8963_WIA: %d \n",MPU92_Mag_ReadReg(AK8963_WIA));
 		  MPU9250_ReadValue();
+		module.acc=1;	
 		return 0;
 }	
 
@@ -320,7 +321,11 @@ void MPU6050_Data_Prepare(float T)
 		mpu6050_fc.Acc_I16.z=rawAccel[2].value;
 		mpu6050_fc.Gyro_I16.x=rawGyro[1].value;
 		mpu6050_fc.Gyro_I16.y=rawGyro[0].value;
-		mpu6050_fc.Gyro_I16.z=rawGyro[2].value;	
+		mpu6050_fc.Gyro_I16.z=rawGyro[2].value;
+		mpu6050_fc.Mag_adc.x=rawMag[1].value/100.;
+		mpu6050_fc.Mag_adc.y=rawMag[0].value/100.;
+		mpu6050_fc.Mag_adc.z=rawMag[2].value/100.;	
+	
 	
     Gyro_tmp[0] = mpu6050_fc.Gyro_I16.x ;//
     Gyro_tmp[1] = mpu6050_fc.Gyro_I16.y ;//

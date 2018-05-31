@@ -1,6 +1,6 @@
 #include "nrf.h"
 #include "spi.h"
-
+#include "head.h"
 uint8_t NRF24L01_RXDATA[RX_PLOAD_WIDTH];//nrf24l01??????
 uint8_t NRF24L01_TXDATA[RX_PLOAD_WIDTH];//nrf24l01???????
 u8  TX_ADDRESS[TX_ADR_WIDTH]= {0xE1,0xE2,0xE3,0xE4,0xE5};	//????
@@ -102,11 +102,11 @@ u8 Nrf24l01_Check(void)
 			break; 
 	} 
 	if(i==5){
-		
+		module.nrf=1;
 		return SUCCESS ; //MCU?NRF???? 
 	  }
 	else{
-	
+	  module.nrf=1;
 		return ERROR ; //MCU?NRF????? 
 	}
 }

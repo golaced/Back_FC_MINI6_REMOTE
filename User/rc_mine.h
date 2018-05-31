@@ -27,7 +27,7 @@ extern u8	(up_load_set);
 extern u8	(up_load_pid);
 extern u16 yaw_sb;
 
-extern u8 has_tx,gps_f_connect_flag;
+extern u8 has_tx,gps_f_connect_flag,send_pid;
 
 
 extern double GPS_W,GPS_J;
@@ -129,11 +129,11 @@ struct _plane{
 	float att[3];
 	float spd[3];
 	float pos[3];
-	u8 lock,mode,state_v,acc3d_step,bat;
+	u8 lock,mode,state_v,acc3d_step,bat,read_pid;
 	int PID[18][3];
 	int PID_RX[18][3];
 	int rc_lost_cnt,rssi;
-	u8 gps_sv,acc_cal,acc_3d_cal,gyro_cal,mag_cal;
+	u8 gps_sv,acc_cal,acc_3d_cal,gyro_cal,mag_cal,pos_sensor_state;
               };
 
 extern struct _plane plane;	

@@ -20,6 +20,8 @@
 
 //初始化ADC，使用DMA传输
 void Adc_Init(void);
+void  Adc_Init1(void);
+u16 getAdcValue1(uint8_t axis);
 void ADC_Filter(uint16_t* adc_val);	//ADC均值滤波
 uint16_t getAdcValue(uint8_t axis);
 extern int rc_off[2];
@@ -30,7 +32,7 @@ typedef struct
 	u16 pitch;
 	u16 yaw;
 	u16 thrust;
-	u16 bat,bat_percent;
+	float bat,bat_percent;
 }joystickFlyui16_t;
 extern joystickFlyui16_t adc_rc;
 void getFlyDataADCValue(void);

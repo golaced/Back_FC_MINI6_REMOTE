@@ -447,7 +447,7 @@ void OLED_Init(void)
 	OLED_SCLK_Set();  	
 	
 	OLED_RST_Clr();
-  delay_ms_api(50);
+  delay_us(50);
   OLED_RST_Set();
 	
   OLED_WR_Byte(0xAE,OLED_CMD); //πÿ±’œ‘ æ

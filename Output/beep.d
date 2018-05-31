@@ -24,3 +24,4 @@
 ..\..\Output\beep.o: ..\..\User\ff.h
 ..\..\Output\beep.o: ..\..\User\integer.h
 ..\..\Output\beep.o: ..\..\User\ffconf.h
+..\..\Output\beep.o: ..\..\User\rc_mine.h

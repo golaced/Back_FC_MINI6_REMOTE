@@ -14,3 +14,16 @@
 ..\..\Output\nrf.o: ..\..\Libraries\FWlib\inc\stm32f10x_usart.h
 ..\..\Output\nrf.o: ..\..\Libraries\FWlib\inc\misc.h
 ..\..\Output\nrf.o: ..\..\User\usart\spi.h
+..\..\Output\nrf.o: ..\..\User\head.h
+..\..\Output\nrf.o: ..\..\User\oled_config.h
+..\..\Output\nrf.o: ..\..\User\usart\usart.h
+..\..\Output\nrf.o: d:\Keil_v4\ARM\ARMCC\bin\..\include\stdio.h
+..\..\Output\nrf.o: ..\..\User\usart\usart_config.h
+..\..\Output\nrf.o: ..\..\Libraries\FWlib\inc\stm32f10x_dma.h
+..\..\Output\nrf.o: ..\..\User\beep.h
+..\..\Output\nrf.o: ..\..\Libraries\FWlib\inc\stm32f10x_tim.h
+..\..\Output\nrf.o: ..\..\User\time.h
+..\..\Output\nrf.o: ..\..\User\usart\delay.h
+..\..\Output\nrf.o: ..\..\User\ff.h
+..\..\Output\nrf.o: ..\..\User\integer.h
+..\..\Output\nrf.o: ..\..\User\ffconf.h
