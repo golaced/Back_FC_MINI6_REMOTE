@@ -363,7 +363,7 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 				acc_3d_step++;
 			else
 				acc_3d_step=0;}
-
+          
 		}
 		else if(*(data_buf+4)==0X20)
 		{
@@ -371,6 +371,7 @@ void ANO_DT_Data_Receive_Anl(u8 *data_buf,u8 num)
 		}
 	}
 	
+
 	if(*(data_buf+2)==0X02)
 	{
 		if(*(data_buf+4)==0X01)

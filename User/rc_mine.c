@@ -9,6 +9,7 @@
 #include "rc_mine.h"
 #include "nrf.h"
 #include "key.h"
+#include "data_transfer.h"
 #define RX_DR			6		//????
 #define TX_DS			5
 #define MAX_RT		4
@@ -66,6 +67,11 @@ u8 temp;
 		plane.acc3d_step= NRF24L01_RXDATA[23];
 		plane.bat=(vs16)(NRF24L01_RXDATA[24]<<8)|NRF24L01_RXDATA[25];
 		plane.pos_sensor_state=NRF24L01_RXDATA[26];
+		plane.module.gps=NRF24L01_RXDATA[27]>>7&0x0000001;
+		plane.module.vision=NRF24L01_RXDATA[27]>>6&0x0000001;
+		plane.module.flow=NRF24L01_RXDATA[27]>>5&0x0000001;
+		plane.module.bmp=NRF24L01_RXDATA[27]>>4&0x0000001;
+		plane.module.sonar=NRF24L01_RXDATA[27]>>3&0x0000001;
   }
 	else if(NRF24L01_RXDATA[0]==0x02)//send2								
 	{ 
@@ -241,7 +247,7 @@ void Nrf_Check_Event(void)
 
 
 void NRF_Send_RC(void)//????
-{
+{ 	static u8 cnt_s6;
 	uint8_t i;
 	vs16 _temp;	
 	u8 cnt=0;
@@ -268,12 +274,23 @@ void NRF_Send_RC(void)//????
 	NRF24L01_TXDATA[cnt++] = BYTE0(Rc_Get.AUX5);
 
   NRF24L01_TXDATA[cnt++] = key_o[4]<<4|key_o[3]<<3|key_o[2]<<2|key_o[1]<<1|key_o[0];
-	NRF24L01_TXDATA[cnt++] = plane.acc_3d_cal<<2|plane.acc_cal<<1|plane.gyro_cal;
+	NRF24L01_TXDATA[cnt++] = plane.mag_cal<<2|plane.acc_cal<<1|plane.gyro_cal;
 	if(plane.acc_cal)
 		plane.acc_cal=0;
 	if(plane.gyro_cal)
 		plane.gyro_cal=0;
+	if(plane.mag_cal)
+		plane.mag_cal=0;
 	NRF24L01_TXDATA[cnt++] = plane.read_pid;
+
+	if(acc_3d_step==6)
+		cnt_s6++;
+	if(cnt_s6>3){cnt_s6=0;
+    		acc_3d_step=0;
+	}
+  plane.acc_3d_cal=	acc_3d_step;
+	
+	NRF24L01_TXDATA[cnt++] = plane.acc_3d_cal;
 	if(plane.read_pid)
 		plane.read_pid=0;
 	

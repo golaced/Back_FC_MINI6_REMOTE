@@ -28,3 +28,4 @@
 ..\..\Output\rc_mine.o: ..\..\User\usart\nrf.h
 ..\..\Output\rc_mine.o: ..\..\User\usart\sys.h
 ..\..\Output\rc_mine.o: ..\..\User\key.h
+..\..\Output\rc_mine.o: ..\..\User\data_transfer.h

@@ -30,6 +30,11 @@ u8 rc_error_music[]={
  27,11, 00,11,   27,11, 00,11,  27,11, 00,11, 00,39 , 00,39
 };
 
+
+u8 upload_music[]={
+ 37,11, 13,11,   17,21, 13,11,  37,11
+};
+
 u8 start_music_pix[]={
  04,32, 24,22, 05,32, 
  04,32, 24,22, 05,32,
@@ -94,6 +99,9 @@ void Play_Music_Direct(u8 sel)
 		break;
 		case MEMS_ERROR_BEEP:
 		Play_Music(mems_error_music,0,sizeof(mems_error_music)/2);		
+		break;
+		case UPLOAD_BEEP:
+		Play_Music(upload_music,0,sizeof(upload_music)/2);		
 		break;
 		case RC_RESET_BEEP:
 		Play_Music(rc_reset_music,0,sizeof(rc_reset_music)/2);		

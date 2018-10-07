@@ -26,5 +26,6 @@ void Play_Music_Task(u8 sel,float dt);
 #define BAT_ERO_BEEP 3
 #define RC_ERO_BEEP 4
 #define RC_RESET_BEEP 5
+#define UPLOAD_BEEP 6
 #endif
 

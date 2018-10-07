@@ -13,18 +13,31 @@
 #include "gui_basic.h"
 #include "hw_config.h"
 #include "data_transfer.h"
-
+#define USE_AS_MONITER 1
 MODULE module;
+u8 CHANNAL=44;
 
-void OLED_TASK(float dt)
+int moniter_sel=0;
+int sub_sel[3]={0};
+void OLED_TASK(float dt)//状态界面0
 {
-	 int cx,cy;
+	 static int cx,cy;
 	 char temp[10][20]={'\0'};
    GUI_RectangleFill(42,1,123,55,0);
    GUI_Rectangle(42,1,123,55,1);
+   #if USE_AS_MONITER
+   if(DEBUG[6]!=0&&DEBUG[7]!=0){
+   cx=LIMIT(80+(DEBUG[6]-120)*0.35,42+3,123-3);
+   cy=LIMIT(28+(DEBUG[7]-160)*0.168,1+3,55-3);
+	 GUI_CircleFill(cx,cy,2,1);	 
+	 }
+	 else
+	 GUI_CircleFill(cx,cy,2,0);	 
+   #else
    cx=LIMIT(80+(Rc_Get.ROL-1500)*0.1,42+3,123-3);
    cy=LIMIT(28+(Rc_Get.PIT-1500)*0.1,1+3,55-3);
-	 GUI_CircleFill(cx,cy,3,1);  
+	 GUI_CircleFill(cx,cy,3,1);
+   #endif
    GUI_Circle(80,28,5,1);   
    //
    OLED_Refresh_Gram(); 
@@ -55,6 +68,11 @@ void OLED_TASK(float dt)
 	 break;
 	 case 2://qr
 	 OLED_P6x8Str(45,0,"QR :");
+   my_itoa(plane.gps_sv,temp[0]);
+	 OLED_P6x8Str(45+5*5,0,temp[0]);
+	 break;
+	 case 3://gps	 
+   OLED_P6x8Str(45,0,"GPS:");
    my_itoa(plane.gps_sv,temp[0]);
 	 OLED_P6x8Str(45+5*5,0,temp[0]);
 	 break;
@@ -102,20 +120,307 @@ void OLED_TASK(float dt)
 	 else if(pos_mode==2)
 		 OLED_P6x8Str(4*3,7,"Smart");
 	 
-	
+	 //att
+	  OLED_P6x8Str(45,1,"P:");
+	  my_itoa(plane.att[1],temp[6]);
+	  OLED_P6x8Str(45+3*3,1,temp[6]);
+	 
+	  OLED_P6x8Str(45+3*8,1,"R:");
+	  my_itoa(plane.att[0],temp[7]);
+	  OLED_P6x8Str(45+3*8+3*3,1,temp[7]);
+	 
+	  OLED_P6x8Str(45+3*8*2,1,"Y:");
+	  my_itoa(plane.att[2],temp[8]);
+	  OLED_P6x8Str(45+3*8*2+3*3,1,temp[8]);
+}
+
+float set[10]=0;
+void OLED_TASK_SUB_SEL(float dt)
+{
+	 static int cx,cy;
+   cx=sub_sel[0]*66+set[1];
+   cy=sub_sel[1]*1+set[3];
+	 if(sub_sel[2])
+	 OLED_P6x8Str(cx,cy,"*");	 
+	 else
+	 OLED_P6x8Str(cx,cy,"-");
+}
+
+void OLED_TASK_PID1(float dt)//参数界面1
+{
+	 static int cx,cy;
+	 char temp[10][40]={'\0'};
+   OLED_Fill(0x00);
+   OLED_P6x8Str(3+4,0,"P01:");
+   my_itoa(plane.PID_RX[0][0],temp[0]);
+	 OLED_P6x8Str(36,0,temp[0]);
+   OLED_P6x8Str(3+4,1,"I01:");
+   my_itoa(plane.PID_RX[0][1],temp[1]);
+	 OLED_P6x8Str(36,1,temp[1]);
+   OLED_P6x8Str(3+4,2,"D01:");
+   my_itoa(plane.PID_RX[0][2],temp[2]);
+	 OLED_P6x8Str(36,2,temp[2]);
+
+
+   OLED_P6x8Str(3+4,4,"P02:");
+   my_itoa(plane.PID_RX[1][0],temp[0]);
+	 OLED_P6x8Str(36,4,temp[0]);
+   OLED_P6x8Str(3+4,5,"I02:");
+   my_itoa(plane.PID_RX[1][1],temp[1]);
+	 OLED_P6x8Str(36,5,temp[1]);
+   OLED_P6x8Str(3+4,6,"D02:");
+   my_itoa(plane.PID_RX[1][2],temp[2]);
+	 OLED_P6x8Str(36,6,temp[2]);
+	 
+	 OLED_P6x8Str(3+4+66,0,"P03:");
+   my_itoa(plane.PID_RX[2][0],temp[0]);
+	 OLED_P6x8Str(36+66,0,temp[0]);
+   OLED_P6x8Str(3+4+66,1,"I03:");
+   my_itoa(plane.PID_RX[2][1],temp[1]);
+	 OLED_P6x8Str(36+66,1,temp[1]);
+   OLED_P6x8Str(3+4+66,2,"D03:");
+   my_itoa(plane.PID_RX[2][2],temp[2]);
+	 OLED_P6x8Str(36+66,2,temp[2]);
+	 
+	 OLED_P6x8Str(3+4+66,4,"P04:");
+   my_itoa(plane.PID_RX[3][0],temp[0]);
+	 OLED_P6x8Str(36+66,4,temp[0]);
+   OLED_P6x8Str(3+4+66,5,"I04:");
+   my_itoa(plane.PID_RX[3][1],temp[1]);
+	 OLED_P6x8Str(36+66,5,temp[1]);
+   OLED_P6x8Str(3+4+66,6,"D04:");
+   my_itoa(plane.PID_RX[3][2],temp[2]);
+	 OLED_P6x8Str(36+66,6,temp[2]);
+}
+
+void OLED_TASK_PID2(float dt)//参数界面1
+{
+	 static int cx,cy;
+	 char sel=0;
+	 char temp[10][40]={'\0'};
+   OLED_Fill(0x00);
+   sel=4;
+   OLED_P6x8Str(3+4,0,"P05:");
+   my_itoa(plane.PID_RX[sel][0],temp[0]);
+	 OLED_P6x8Str(36,0,temp[0]);
+   OLED_P6x8Str(3+4,1,"I05:");
+   my_itoa(plane.PID_RX[sel][1],temp[1]);
+	 OLED_P6x8Str(36,1,temp[1]);
+   OLED_P6x8Str(3+4,2,"D05:");
+   my_itoa(plane.PID_RX[sel][2],temp[2]);
+	 OLED_P6x8Str(36,2,temp[2]);
+
+   sel=5;
+   OLED_P6x8Str(3+4,4,"P06:");
+   my_itoa(plane.PID_RX[sel][0],temp[0]);
+	 OLED_P6x8Str(36,4,temp[0]);
+   OLED_P6x8Str(3+4,5,"I06:");
+   my_itoa(plane.PID_RX[sel][1],temp[1]);
+	 OLED_P6x8Str(36,5,temp[1]);
+   OLED_P6x8Str(3+4,6,"D06:");
+   my_itoa(plane.PID_RX[sel][2],temp[2]);
+	 OLED_P6x8Str(36,6,temp[2]);
+	 
+	 sel=6;
+	 OLED_P6x8Str(3+4+66,0,"P07:");
+   my_itoa(plane.PID_RX[sel][0],temp[0]);
+	 OLED_P6x8Str(36+66,0,temp[0]);
+   OLED_P6x8Str(3+4+66,1,"I07:");
+   my_itoa(plane.PID_RX[sel][1],temp[1]);
+	 OLED_P6x8Str(36+66,1,temp[1]);
+   OLED_P6x8Str(3+4+66,2,"D07:");
+   my_itoa(plane.PID_RX[sel][2],temp[2]);
+	 OLED_P6x8Str(36+66,2,temp[2]);
+	 
+	 sel=7;
+	 OLED_P6x8Str(3+4+66,4,"P08:");
+   my_itoa(plane.PID_RX[sel][0],temp[0]);
+	 OLED_P6x8Str(36+66,4,temp[0]);
+   OLED_P6x8Str(3+4+66,5,"I08:");
+   my_itoa(plane.PID_RX[sel][1],temp[1]);
+	 OLED_P6x8Str(36+66,5,temp[1]);
+   OLED_P6x8Str(3+4+66,6,"D08:");
+   my_itoa(plane.PID_RX[sel][2],temp[2]);
+	 OLED_P6x8Str(36+66,6,temp[2]);
+}
+
+
+void OLED_TASK_PID3(float dt)//参数界面1
+{
+	 static int cx,cy;
+	 char sel=0;
+	 char temp[10][40]={'\0'};
+   OLED_Fill(0x00);
+   sel=8;
+   OLED_P6x8Str(3+4,0,"P09:");
+   my_itoa(plane.PID_RX[sel][0],temp[0]);
+	 OLED_P6x8Str(36,0,temp[0]);
+   OLED_P6x8Str(3+4,1,"I09:");
+   my_itoa(plane.PID_RX[sel][1],temp[1]);
+	 OLED_P6x8Str(36,1,temp[1]);
+   OLED_P6x8Str(3+4,2,"D09:");
+   my_itoa(plane.PID_RX[sel][2],temp[2]);
+	 OLED_P6x8Str(36,2,temp[2]);
+
+   sel=9;
+   OLED_P6x8Str(3+4,4,"P10:");
+   my_itoa(plane.PID_RX[sel][0],temp[0]);
+	 OLED_P6x8Str(36,4,temp[0]);
+   OLED_P6x8Str(3+4,5,"I10:");
+   my_itoa(plane.PID_RX[sel][1],temp[1]);
+	 OLED_P6x8Str(36,5,temp[1]);
+   OLED_P6x8Str(3+4,6,"D10:");
+   my_itoa(plane.PID_RX[sel][2],temp[2]);
+	 OLED_P6x8Str(36,6,temp[2]);
+	 
+	 sel=10;
+	 OLED_P6x8Str(3+4+66,0,"P11:");
+   my_itoa(plane.PID_RX[sel][0],temp[0]);
+	 OLED_P6x8Str(36+66,0,temp[0]);
+   OLED_P6x8Str(3+4+66,1,"I11:");
+   my_itoa(plane.PID_RX[sel][1],temp[1]);
+	 OLED_P6x8Str(36+66,1,temp[1]);
+   OLED_P6x8Str(3+4+66,2,"D11:");
+   my_itoa(plane.PID_RX[sel][2],temp[2]);
+	 OLED_P6x8Str(36+66,2,temp[2]);
+	 
+	 sel=11;
+	 OLED_P6x8Str(3+4+66,4,"P12:");
+   my_itoa(plane.PID_RX[sel][0],temp[0]);
+	 OLED_P6x8Str(36+66,4,temp[0]);
+   OLED_P6x8Str(3+4+66,5,"I12:");
+   my_itoa(plane.PID_RX[sel][1],temp[1]);
+	 OLED_P6x8Str(36+66,5,temp[1]);
+   OLED_P6x8Str(3+4+66,6,"D12:");
+   my_itoa(plane.PID_RX[sel][2],temp[2]);
+	 OLED_P6x8Str(36+66,6,temp[2]);
+}
+
+
+void OLED_TASK_PID4(float dt)//参数界面1
+{
+	 static int cx,cy;
+	 char sel=0;
+	 char temp[10][40]={'\0'};
+   OLED_Fill(0x00);
+   sel=12;
+   OLED_P6x8Str(3+4,0,"P13:");
+   my_itoa(plane.PID_RX[sel][0],temp[0]);
+	 OLED_P6x8Str(36,0,temp[0]);
+   OLED_P6x8Str(3+4,1,"I13:");
+   my_itoa(plane.PID_RX[sel][1],temp[1]);
+	 OLED_P6x8Str(36,1,temp[1]);
+   OLED_P6x8Str(3+4,2,"D13:");
+   my_itoa(plane.PID_RX[sel][2],temp[2]);
+	 OLED_P6x8Str(36,2,temp[2]);
+
+   sel=13;
+   OLED_P6x8Str(3+4,4,"P14:");
+   my_itoa(plane.PID_RX[sel][0],temp[0]);
+	 OLED_P6x8Str(36,4,temp[0]);
+   OLED_P6x8Str(3+4,5,"I14:");
+   my_itoa(plane.PID_RX[sel][1],temp[1]);
+	 OLED_P6x8Str(36,5,temp[1]);
+   OLED_P6x8Str(3+4,6,"D14:");
+   my_itoa(plane.PID_RX[sel][2],temp[2]);
+	 OLED_P6x8Str(36,6,temp[2]);
+	 
+	 sel=14;
+	 OLED_P6x8Str(3+4+66,0,"P15:");
+   my_itoa(plane.PID_RX[sel][0],temp[0]);
+	 OLED_P6x8Str(36+66,0,temp[0]);
+   OLED_P6x8Str(3+4+66,1,"I15:");
+   my_itoa(plane.PID_RX[sel][1],temp[1]);
+	 OLED_P6x8Str(36+66,1,temp[1]);
+   OLED_P6x8Str(3+4+66,2,"D15:");
+   my_itoa(plane.PID_RX[sel][2],temp[2]);
+	 OLED_P6x8Str(36+66,2,temp[2]);
+	 
+	 sel=15;
+	 OLED_P6x8Str(3+4+66,4,"P16:");
+   my_itoa(plane.PID_RX[sel][0],temp[0]);
+	 OLED_P6x8Str(36+66,4,temp[0]);
+   OLED_P6x8Str(3+4+66,5,"I16:");
+   my_itoa(plane.PID_RX[sel][1],temp[1]);
+	 OLED_P6x8Str(36+66,5,temp[1]);
+   OLED_P6x8Str(3+4+66,6,"D16:");
+   my_itoa(plane.PID_RX[sel][2],temp[2]);
+	 OLED_P6x8Str(36+66,6,temp[2]);
+}
+
+
+
+void OLED_TASK_PID5(float dt)//参数界面1
+{
+	 static int cx,cy;
+	 char sel=0;
+	 char temp[10][40]={'\0'};
+   OLED_Fill(0x00);
+   sel=16;
+   OLED_P6x8Str(3+4,0,"P17:");
+   my_itoa(plane.PID_RX[sel][0],temp[0]);
+	 OLED_P6x8Str(36,0,temp[0]);
+   OLED_P6x8Str(3+4,1,"I17:");
+   my_itoa(plane.PID_RX[sel][1],temp[1]);
+	 OLED_P6x8Str(36,1,temp[1]);
+   OLED_P6x8Str(3+4,2,"D17:");
+   my_itoa(plane.PID_RX[sel][2],temp[2]);
+	 OLED_P6x8Str(36,2,temp[2]);
+
+   sel=17;
+   OLED_P6x8Str(3+4,4,"P18:");
+   my_itoa(plane.PID_RX[sel][0],temp[0]);
+	 OLED_P6x8Str(36,4,temp[0]);
+   OLED_P6x8Str(3+4,5,"I18:");
+   my_itoa(plane.PID_RX[sel][1],temp[1]);
+	 OLED_P6x8Str(36,5,temp[1]);
+   OLED_P6x8Str(3+4,6,"D18:");
+   my_itoa(plane.PID_RX[sel][2],temp[2]);
+	 OLED_P6x8Str(36,6,temp[2]);
+	 
+// 	 sel=18;
+// 	 OLED_P6x8Str(3+3+66,0,"P70:");
+//    my_itoa(plane.PID_RX[sel][0],temp[0]);
+// 	 OLED_P6x8Str(36+66,0,temp[0]);
+//    OLED_P6x8Str(3+3+66,1,"P71:");
+//    my_itoa(plane.PID_RX[sel][1],temp[1]);
+// 	 OLED_P6x8Str(36+66,1,temp[1]);
+//    OLED_P6x8Str(3+3+66,2,"P72:");
+//    my_itoa(plane.PID_RX[sel][2],temp[2]);
+// 	 OLED_P6x8Str(36+66,2,temp[2]);
+// 	 
+// 	 sel=19;
+// 	 OLED_P6x8Str(3+3+66,4,"P80:");
+//    my_itoa(plane.PID_RX[sel][0],temp[0]);
+// 	 OLED_P6x8Str(36+66,4,temp[0]);
+//    OLED_P6x8Str(3+3+66,5,"P81:");
+//    my_itoa(plane.PID_RX[sel][1],temp[1]);
+// 	 OLED_P6x8Str(36+66,5,temp[1]);
+//    OLED_P6x8Str(3+3+66,6,"P82:");
+//    my_itoa(plane.PID_RX[sel][2],temp[2]);
+// 	 OLED_P6x8Str(36+66,6,temp[2]);
 }
 
 void BEEP_TASK(float dt)
-{
+{ static u8 beep_rst;
  	Play_Music_Task(RC_ERO_BEEP,dt); 
+	if(beep_rst++>20){beep_rst=0;
+		Tone(0,0);
+	}
 }
 
 float dt[10]={0},off_att[2];
 u16 key_sel_down=0;
 u8 rst_screen=0;
 int main(void)
-{	u8 i;
+{	u8 i,j;
+	static u16 cnt_flag[10];
+	char temp[10][20]={'\0'};
+  static u8 moniter_reg;
+  static int cnt_get_data;
+	u8 pid_sel[2],page,sub_page;
 
+//------------------------------------//
 	delay_init(72);		//延时初始化
 	TIM3_Config();
 	Cycle_Time_Init();
@@ -123,7 +428,7 @@ int main(void)
 	USART_init();	
 	Adc_Init();
 	SPI1_Init();		
-	Nrf24l01_Init(MODEL_TX2,40);// 伪双工  主接收
+	Nrf24l01_Init(MODEL_TX2,CHANNAL);// 伪双工  主接收
 	Nrf24l01_Check();
 	Mpu9250_Init();
 	Parameter_Init();
@@ -133,6 +438,10 @@ int main(void)
 	OLED_P6x8Str(3,7,"Nrf2.4G OK!");
 	if(module.acc)
 	OLED_P6x8Str(3,6,"Mpu9250 OK!");
+	
+  OLED_P6x8Str(3,5,"Channle:");
+  my_itoa(CHANNAL,temp[0]);
+  OLED_P6x8Str(50,5,temp[0]);
 	delay_ms(40000);
 	OLED_Fill(0x00);
 	Beep_Init(0,72-1);
@@ -173,17 +482,19 @@ int main(void)
 			Rc_Get.ROL=LIMIT(adc_rc.roll,1000,2000);
 			Rc_Get.YA=LIMIT(adc_rc.yaw,1000,2000);
 			Rc_Get.THROTTLE=LIMIT(adc_rc.thrust,1000,2000);
-			
+			#if !USE_AS_MONITER
 			if(key_o[4]){
            key_sel_down++;
         }
 				if(key_sel_down>2/0.005){
 					  key_sel_down=0;
+					  sub_sel[2]=!sub_sel[2];
 					  off_att[0]=Pit_fc;
 					  off_att[1]=Rol_fc;
 					  WRITE_PARM();
 					  Play_Music_Direct(RC_RESET_BEEP);				  
 				}
+			 #endif
        ANO_DT_Data_Exchange(); 	
 		 } 
   
@@ -209,12 +520,144 @@ int main(void)
       flag_ms[25]=0;
 			
 		 }
-		 
+
 		 if(flag_ms[50]==1)
 		 {
 			dt[5] = Get_Cycle_T(5)/1000000.0f;	   
       flag_ms[50]=0;
-			OLED_TASK(0.05);  
+			 
+			 
+			#if USE_AS_MONITER 
+			  if(Rc_Get.YA>1800)
+				{cnt_flag[0]++;cnt_flag[2]++;}
+				else
+				{cnt_flag[0]=0;cnt_flag[2]=0;}
+				
+				if(Rc_Get.YA<1200)
+				{cnt_flag[1]++;cnt_flag[3]++;}
+				else
+				{cnt_flag[1]=0;cnt_flag[3]=0;}
+			 
+				if(Rc_Get.THROTTLE>1800)
+				{cnt_flag[4]++;cnt_flag[6]++;}
+				else
+				{cnt_flag[4]=0;cnt_flag[6]=0;}
+				
+				if(Rc_Get.THROTTLE<1200)
+				{cnt_flag[5]++;cnt_flag[7]++;}
+				else
+				{cnt_flag[5]=0;cnt_flag[7]=0;}
+				
+				if(cnt_flag[1]>1.2/0.05)
+				{cnt_flag[1]=cnt_flag[2]=0;moniter_sel--;}	
+				if(cnt_flag[0]>1.2/0.05)
+				{cnt_flag[0]=cnt_flag[3]=0;moniter_sel++;}	
+				//---------------------
+				if(cnt_flag[2]>0.1/0.05)
+				{cnt_flag[1]=cnt_flag[2]=0;if(sub_sel[2]==0)sub_sel[0]--;}	
+				if(cnt_flag[3]>0.1/0.05)
+				{cnt_flag[0]=cnt_flag[3]=0;if(sub_sel[2]==0)sub_sel[0]++;}	
+				
+				if(key_o[4])
+				{cnt_flag[8]++;cnt_flag[9]++;}
+				else
+				 cnt_flag[8]=cnt_flag[9]=0;
+				if(cnt_flag[8]>0.1/0.05){
+					  cnt_flag[8]=0;
+					  sub_sel[2]=!sub_sel[2];
+				}
+				if(cnt_flag[9]>1.5/0.05&&moniter_sel!=0){
+					  cnt_flag[9]=0;
+					  for(i=0;i<18;i++)
+					    for(j=0;j<3;j++)
+					         plane.PID[i][j]=plane.PID_RX[i][j];
+            Play_Music_Direct(UPLOAD_BEEP);
+					  send_pid=1;
+					  sub_sel[2]=0;
+				}
+				
+				if(cnt_flag[6]>0.1/0.05)
+				{cnt_flag[4]=cnt_flag[6]=0;if(sub_sel[2]==0)sub_sel[1]--;if(sub_sel[1]==3)sub_sel[1]=2;}	
+				if(cnt_flag[7]>0.1/0.05)
+				{cnt_flag[5]=cnt_flag[7]=0;if(sub_sel[2]==0)sub_sel[1]++;if(sub_sel[1]==3)sub_sel[1]=4;}	
+				
+				if(sub_sel[0]>1)
+					sub_sel[0]=0;
+				if(sub_sel[0]<0)
+					sub_sel[0]=1;
+				if(sub_sel[1]>6)
+					sub_sel[1]=0;
+				if(sub_sel[1]<0)
+					sub_sel[1]=6;
+				
+				if(moniter_sel>5)
+					moniter_sel=0;
+				if(moniter_sel<0)
+					moniter_sel=5;
+				
+			//change data
+			
+			if(sub_sel[1]<3)	
+				sub_page=sub_sel[1];
+			else
+				sub_page=sub_sel[1]-4;
+			
+			if(sub_sel[0]==0&&sub_sel[1]<3)
+				 page=0;
+			if(sub_sel[0]==0&&sub_sel[1]>3)
+				 page=1;
+			if(sub_sel[0]==1&&sub_sel[1]<3)
+				 page=2;
+			if(sub_sel[0]==1&&sub_sel[1]>3)
+				 page=3;
+			
+			pid_sel[0]=LIMIT((moniter_sel-1)*4+page,0,17);
+			pid_sel[1]=LIMIT(sub_page,0,2);
+					
+			if(sub_sel[2]){	
+				plane.PID_RX[pid_sel[0]][pid_sel[1]]+=my_deathzoom1(Rc_Get.THROTTLE-1500,50)*0.01;
+				plane.PID_RX[pid_sel[0]][pid_sel[1]]+=my_deathzoom1(Rc_Get.YA-1500,150)*0.2;
+				plane.PID_RX[pid_sel[0]][pid_sel[1]]=LIMIT(plane.PID_RX[pid_sel[0]][pid_sel[1]],0,9999);
+			}	
+			#endif 
+			switch(moniter_sel)
+      {
+       case 0:				
+			   OLED_TASK(0.05);  
+			 break;
+			 case 1:
+				 OLED_TASK_PID1(0.05); OLED_TASK_SUB_SEL(0.05);
+         if(cnt_get_data++>3.5/0.05)
+				  {cnt_get_data=0;plane.read_pid=1;}					 
+			 break;
+			 case 2:
+				 OLED_TASK_PID2(0.05); OLED_TASK_SUB_SEL(0.05);
+         if(cnt_get_data++>3.5/0.05)
+				  {cnt_get_data=0;plane.read_pid=1;}					 
+			 break;	
+			case 3:
+				OLED_TASK_PID3(0.05); OLED_TASK_SUB_SEL(0.05);
+				if(cnt_get_data++>3.5/0.05)
+				{cnt_get_data=0;plane.read_pid=1;}					 
+			break;	
+			case 4:
+				OLED_TASK_PID4(0.05); OLED_TASK_SUB_SEL(0.05);
+				if(cnt_get_data++>3.5/0.05)
+				{cnt_get_data=0;plane.read_pid=1;}					 
+			break;	
+			case 5:
+				OLED_TASK_PID5(0.05); OLED_TASK_SUB_SEL(0.05);
+				if(cnt_get_data++>3.5/0.05)
+				{cnt_get_data=0;plane.read_pid=1;}					 
+			break;						
+		  }
+			if(sub_sel[2]==1)
+				cnt_get_data=0;
+			if(moniter_reg==0&&moniter_sel!=0)
+				plane.read_pid=1;
+			if(moniter_reg!=moniter_sel)
+				sub_sel[2]=0;
+			moniter_reg=moniter_sel;
 			BEEP_TASK(0.05); 
 			KEY_Scan(0.05);	
 		 }

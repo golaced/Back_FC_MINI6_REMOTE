@@ -94,6 +94,9 @@ struct _sensor{
 extern struct _sensor sensor;	
 
 	
+struct Module{   
+u8 gps,vision,flow,hml,gyro,bmp,acc,rc,sonar;
+};
 
 struct _speed{   
 	int altitude;
@@ -134,6 +137,7 @@ struct _plane{
 	int PID_RX[18][3];
 	int rc_lost_cnt,rssi;
 	u8 gps_sv,acc_cal,acc_3d_cal,gyro_cal,mag_cal,pos_sensor_state;
+	struct Module module;
               };
 
 extern struct _plane plane;	
