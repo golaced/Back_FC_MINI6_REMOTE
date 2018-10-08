@@ -90,6 +90,22 @@ u8 temp;
 		CH[3]= (vs16)(NRF24L01_RXDATA[25]<<8)|NRF24L01_RXDATA[26];
 		CH[4]= (vs16)(NRF24L01_RXDATA[27]<<8)|NRF24L01_RXDATA[28];
   }
+	else if(NRF24L01_RXDATA[0]==0x07)//send1								
+	{ 
+		plane.mission.t_att[0]= (float)((vs16)(NRF24L01_RXDATA[1]<<8)|NRF24L01_RXDATA[2])/10.;
+		plane.mission.t_att[1]= (float)((vs16)(NRF24L01_RXDATA[3]<<8)|NRF24L01_RXDATA[4])/10.;
+		plane.mission.t_att[2]= (float)((vs16)(NRF24L01_RXDATA[5]<<8)|NRF24L01_RXDATA[6])/10.;	
+		plane.mission.t_spd[0]= (float)((vs16)(NRF24L01_RXDATA[7]<<8)|NRF24L01_RXDATA[8])/100.;
+		plane.mission.t_spd[1]= (float)((vs16)(NRF24L01_RXDATA[9]<<8)|NRF24L01_RXDATA[10])/100.;
+		plane.mission.t_spd[2]= (float)((vs16)(NRF24L01_RXDATA[11]<<8)|NRF24L01_RXDATA[12])/100.;
+		plane.mission.t_pos[0]= (float)((vs16)(NRF24L01_RXDATA[13]<<8)|NRF24L01_RXDATA[14])/100.;
+		plane.mission.t_pos[1]= (float)((vs16)(NRF24L01_RXDATA[15]<<8)|NRF24L01_RXDATA[16])/100.;
+		plane.mission.t_pos[2]= (float)((vs16)(NRF24L01_RXDATA[17]<<8)|NRF24L01_RXDATA[18])/100.;
+    plane.mission.mains= NRF24L01_RXDATA[19];
+		plane.mission.subs= NRF24L01_RXDATA[20];
+		plane.mission.smarts= NRF24L01_RXDATA[21];
+		plane.mission.wayps= NRF24L01_RXDATA[2];
+  }
 		else if(NRF24L01_RXDATA[0]==0x03)//send3								
 	{ 
 

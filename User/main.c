@@ -23,7 +23,8 @@ void OLED_TASK(float dt)//状态界面0
 {
 	 static int cx,cy;
 	 char temp[10][20]={'\0'};
-   GUI_RectangleFill(42,1,123,55,0);
+   //GUI_RectangleFill(42,1,123,55,0);
+   GUI_RectangleFill(1,1,123,55,0);
    GUI_Rectangle(42,1,123,55,1);
    #if USE_AS_MONITER
    if(DEBUG[6]!=0&&DEBUG[7]!=0){
@@ -401,6 +402,156 @@ void OLED_TASK_PID5(float dt)//参数界面1
 // 	 OLED_P6x8Str(36+66,6,temp[2]);
 }
 
+
+char mode_rc[3];
+int set_rc[3];
+void OLED_TASK_MISSION(float dt)//任务界面
+{
+	
+	char temp[10][40]={'\0'};
+  float draw_err[3];
+  float scale[3];
+  float err[3];
+  //OLED_Fill(0x00);
+		mode_rc[0]=plane.mission.smarts/100;  
+		mode_rc[1]=plane.mission.smarts/10-mode_rc[0]*100; 
+		mode_rc[2]=plane.mission.smarts-mode_rc[0]*100-mode_rc[1]*10; 
+   GUI_RectangleFill(1,1,123,55,0);
+	 GUI_Rectangle(3,3,20,46,1);
+	 GUI_Rectangle(22,3,123,46,1);
+	//mission
+	 if(mode_rc[1]==2)//draw pos
+	 {
+		err[0]=plane.mission.t_pos[0]-plane.pos[0];
+		err[1]=plane.mission.t_pos[1]-plane.pos[1];
+		 
+		if(ABS(err[0])<1)		
+		  scale[0]=1; 
+		else if(ABS(err[0])<2)		
+		  scale[0]=2; 
+		else if(ABS(err[0])<5)		
+		  scale[0]=5;
+	  else if(ABS(err[0])<10)		
+		  scale[0]=10;
+    else 	
+		  scale[0]=15; 		
+
+	  if(ABS(err[1])<1)		
+		  scale[1]=1; 
+		else if(ABS(err[1])<2)		
+		  scale[1]=2; 
+		else if(ABS(err[1])<5)		
+		  scale[1]=5;
+	  else if(ABS(err[1])<10)		
+		  scale[1]=10;
+    else 	
+		  scale[1]=15;		
+		draw_err[0]=LIMIT(err[0],-scale[0],scale[0])/scale[0]*(123-22)/2;
+		draw_err[1]=LIMIT(err[1],-scale[1],scale[1])/scale[1]*(46-3)/2;
+		
+    GUI_Circle(70,25,3,1);//now  
+
+    GUI_CircleFill(70+draw_err[0],25+draw_err[1],2,1);//now  
+	 }//pos spd
+   else if(mode_rc[1]==1)//draw spd
+	 {
+		draw_err[0]=LIMIT(plane.mission.t_spd[0],-1,1)/1*(123-22)/2;
+		draw_err[1]=LIMIT(plane.mission.t_spd[1],-1,1)/1*(46-3)/2;
+		
+    GUI_Circle(70,25,3,1);//now  
+    GUI_RectangleFill(70-2, 25, 70+2, 25+draw_err[1], 1);//y
+    GUI_RectangleFill(70, 25+2, 70+draw_err[0], 25-2, 1);//x 
+	 }
+	 
+	 if(mode_rc[2]==2)//draw height
+	 {
+		err[2]=plane.mission.t_pos[2]-plane.pos[2];
+		 
+		if(ABS(err[2])<1)		
+		  scale[2]=1; 
+		else if(ABS(err[2])<2)		
+		  scale[2]=2; 
+		else if(ABS(err[2])<5)		
+		  scale[2]=5;
+	  else if(ABS(err[2])<10)		
+		  scale[2]=10;
+    else 	
+		  scale[2]=15; 			
+		draw_err[2]=LIMIT(err[2],-scale[2],scale[2])/scale[2]*(43)/2;
+    GUI_Circle(12,24,3,1);//now  
+    GUI_Line(3, 24+draw_err[2], 20, 24+draw_err[2], 1);//set
+	 }else if(mode_rc[2]==1)//draw height
+	 {
+		draw_err[2]=LIMIT(plane.mission.t_spd[2],-1,1)/1*(43)/2;
+    GUI_Circle(12,24,3,1);//now  
+		GUI_RectangleFill(3, 24, 20, 24+draw_err[2], 1);
+	 }
+  OLED_Refresh_Gram(); 
+	//height scale
+	if(mode_rc[2]==2)//draw height
+	{ 
+  my_itoa(scale[2],temp[0]);
+  OLED_P6x8Str(25,3,temp[0]);
+	OLED_P6x8Str(25+12,3,"m");
+  }else if(mode_rc[2]==1)//draw height spd
+	{ 
+  my_itoa(plane.mission.t_spd[2]*10,temp[0]);
+  OLED_P6x8Str(25,3,temp[0]);
+	OLED_P6x8Str(25+12,3,"cm/s");
+  }
+	
+	//pos scale
+	if(mode_rc[2]==2)//draw pos
+	{ 
+  my_itoa(scale[0],temp[0]);
+  OLED_P6x8Str(100,4,temp[0]);
+	OLED_P6x8Str(100+12,4,"m");
+	my_itoa(scale[1],temp[0]);
+  OLED_P6x8Str(60,3,temp[0]);
+	OLED_P6x8Str(60+12,3,"m");
+  }else if(mode_rc[2]==1)//draw pos spd
+	{ 
+	my_itoa(plane.mission.t_spd[0]*10,temp[0]);
+  OLED_P6x8Str(100,4,temp[0]);
+	OLED_P6x8Str(100+12,4,"cm/s");
+	my_itoa(plane.mission.t_spd[1]*10,temp[0]);
+  OLED_P6x8Str(60,3,temp[0]);
+	OLED_P6x8Str(60+12,3,"cm");
+  }
+	// draw word
+  OLED_P6x8Str(3,0,"Main:");
+  my_itoa(plane.mission.mains,temp[0]);
+  OLED_P6x8Str(36,0,temp[0]);
+
+  OLED_P6x8Str(3,1,"SubS:");
+  my_itoa(plane.mission.subs,temp[0]);
+  OLED_P6x8Str(36,1,temp[0]);
+
+ 
+
+   OLED_P6x8Str(3+3+55,0,"RC:");
+   if(mode_rc[0]==1)
+		 OLED_P6x8Str(36+55,0,"A");
+	 
+	  if(mode_rc[1]==2)
+		 OLED_P6x8Str(36+55+6,0,"P ");
+		else if(mode_rc[1]==1)
+		 OLED_P6x8Str(36+55+6,0,"V ");
+		
+		if(mode_rc[2]==2)
+		 OLED_P6x8Str(36+55+6*2,0,"H ");
+		else if(mode_rc[2]==1)
+		 OLED_P6x8Str(36+55+6*2,0,"R");
+
+   OLED_P6x8Str(3+3+55,1,"Way:");
+   my_itoa(plane.mission.wayps,temp[1]);
+	 OLED_P6x8Str(36+66,1,temp[1]);
+
+		
+
+}
+
+
 void BEEP_TASK(float dt)
 { static u8 beep_rst;
  	Play_Music_Task(RC_ERO_BEEP,dt); 
@@ -590,10 +741,10 @@ int main(void)
 				if(sub_sel[1]<0)
 					sub_sel[1]=6;
 				
-				if(moniter_sel>5)
+				if(moniter_sel>6)
 					moniter_sel=0;
 				if(moniter_sel<0)
-					moniter_sel=5;
+					moniter_sel=6;
 				
 			//change data
 			
@@ -649,7 +800,10 @@ int main(void)
 				OLED_TASK_PID5(0.05); OLED_TASK_SUB_SEL(0.05);
 				if(cnt_get_data++>3.5/0.05)
 				{cnt_get_data=0;plane.read_pid=1;}					 
-			break;						
+			break;
+      case 6:
+        OLED_TASK_MISSION(0.05);
+      break;			
 		  }
 			if(sub_sel[2]==1)
 				cnt_get_data=0;

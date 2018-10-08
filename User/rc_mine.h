@@ -128,6 +128,14 @@ struct _get{
 	struct _altitude altitude;
 	struct _angle AngE;
               };
+
+struct Mission{   
+	float t_spd[3];
+	float t_pos[3];
+	float t_att[3];
+	char mains,subs,smarts,wayps;
+              };
+
 struct _plane{   
 	float att[3];
 	float spd[3];
@@ -138,6 +146,7 @@ struct _plane{
 	int rc_lost_cnt,rssi;
 	u8 gps_sv,acc_cal,acc_3d_cal,gyro_cal,mag_cal,pos_sensor_state;
 	struct Module module;
+	struct Mission mission;
               };
 
 extern struct _plane plane;	
