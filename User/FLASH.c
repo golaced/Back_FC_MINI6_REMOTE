@@ -2,6 +2,7 @@
 #include "stm32f10x_flash.h"//flash操作接口文件（在库文件中），必须要包含
 #include "FLASH.h"
 #include "imu.h"
+#include "rc_mine.h"
 union {
 float Bit32;
 unsigned char Bit8[4];
@@ -147,6 +148,7 @@ uint8_t ReadFlashThreeFloat(uint32_t ReadAddress,
 
 u8 Parameter_Init(void)
 {
+	  float temp;
     ReadFlashThreeFloat(Accel_Offset_Address,
                          &mpu6050_fc.Acc_Offset.x,
                          &mpu6050_fc.Acc_Offset.y,
@@ -157,17 +159,14 @@ u8 Parameter_Init(void)
                          &mpu6050_fc.Gyro_Offset.y,
                          &mpu6050_fc.Gyro_Offset.z);
 	
-	  ReadFlashThreeFloat(Gyro_Offset_Address,
-                         &mpu6050_fc.Gyro_Offset.x,
-                         &mpu6050_fc.Gyro_Offset.y,
-                         &mpu6050_fc.Gyro_Offset.z);
-	
 	  ReadFlashThreeFloat(Mag_Offset_Address,
                          &off_att[0],
                          &off_att[1],
-                         &off_att[1]);
+                         &temp);
+	  CHANNAL=temp;
 	
 	
+	  plane.PID_RX[19][2]=temp;
 }
 
 void WRITE_PARM(void){
@@ -180,5 +179,5 @@ WriteFlashNineFloat(Accel_Offset_Address,
                         mpu6050_fc.Gyro_Offset.z,
                         off_att[0],
                         off_att[1],
-                        off_att[1]);//写入加速度零点偏执与磁力计中心偏执
+                        plane.PID_RX[19][2]);//写入加速度零点偏执与磁力计中心偏执
 }

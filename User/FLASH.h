@@ -4,7 +4,7 @@
 #define Accel_Offset_Address  0
 #define Gyro_Offset_Address   12
 #define Mag_Offset_Address  24//磁力计矫正数据地址
-
+extern u8 CHANNAL;
 u8 Parameter_Init(void);
 void WRITE_PARM(void);
 int ReadFlashNBtye(uint32_t ReadAddress, uint8_t *ReadBuf, int32_t ReadNum);

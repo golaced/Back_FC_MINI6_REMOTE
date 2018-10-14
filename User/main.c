@@ -8,6 +8,7 @@
 #include "FLASH.h"
 #include "imu.h"
 #include "mymath.h"
+#include "math.h"
 #include "rc_mine.h"
 #include "beep.h"
 #include "gui_basic.h"
@@ -133,6 +134,18 @@ void OLED_TASK(float dt)//状态界面0
 	  OLED_P6x8Str(45+3*8*2,1,"Y:");
 	  my_itoa(plane.att[2],temp[8]);
 	  OLED_P6x8Str(45+3*8*2+3*3,1,temp[8]);
+	 
+	  OLED_P6x8Str(45,7,"X:");
+	  my_itoa(plane.pos[0],temp[6]);
+	  OLED_P6x8Str(45+3*3,7,temp[6]);
+	 
+	  OLED_P6x8Str(45+3*8,7,"Y:");
+	  my_itoa(plane.pos[1],temp[6]);
+	  OLED_P6x8Str(45+3*8+3*3,7,temp[6]);
+		
+		OLED_P6x8Str(45+3*8*2,7,"Z:");
+	  my_itoa(plane.pos[2],temp[6]);
+	  OLED_P6x8Str(45+3*8*2+3*3,7,temp[6]);
 }
 
 float set[10]=0;
@@ -390,16 +403,16 @@ void OLED_TASK_PID5(float dt)//参数界面1
 //    my_itoa(plane.PID_RX[sel][2],temp[2]);
 // 	 OLED_P6x8Str(36+66,2,temp[2]);
 // 	 
-// 	 sel=19;
+	 sel=19;
 // 	 OLED_P6x8Str(3+3+66,4,"P80:");
 //    my_itoa(plane.PID_RX[sel][0],temp[0]);
 // 	 OLED_P6x8Str(36+66,4,temp[0]);
 //    OLED_P6x8Str(3+3+66,5,"P81:");
 //    my_itoa(plane.PID_RX[sel][1],temp[1]);
 // 	 OLED_P6x8Str(36+66,5,temp[1]);
-//    OLED_P6x8Str(3+3+66,6,"P82:");
-//    my_itoa(plane.PID_RX[sel][2],temp[2]);
-// 	 OLED_P6x8Str(36+66,6,temp[2]);
+   OLED_P6x8Str(3+3+66,6,"CH :");
+   my_itoa(plane.PID_RX[sel][2],temp[2]);
+	 OLED_P6x8Str(36+66,6,temp[2]);
 }
 
 
@@ -407,10 +420,12 @@ char mode_rc[3];
 int set_rc[3];
 void OLED_TASK_MISSION(float dt)//任务界面
 {
-	
-	char temp[10][40]={'\0'};
+	int dis,yaw_d[2];
+	char temp[10][40]={'\0'},i;
   float draw_err[3];
+  float temp_err[3];
   float scale[3];
+	float cy,sy;
   float err[3];
   //OLED_Fill(0x00);
 		mode_rc[0]=plane.mission.smarts/100;  
@@ -420,40 +435,7 @@ void OLED_TASK_MISSION(float dt)//任务界面
 	 GUI_Rectangle(3,3,20,46,1);
 	 GUI_Rectangle(22,3,123,46,1);
 	//mission
-	 if(mode_rc[1]==2)//draw pos
-	 {
-		err[0]=plane.mission.t_pos[0]-plane.pos[0];
-		err[1]=plane.mission.t_pos[1]-plane.pos[1];
-		 
-		if(ABS(err[0])<1)		
-		  scale[0]=1; 
-		else if(ABS(err[0])<2)		
-		  scale[0]=2; 
-		else if(ABS(err[0])<5)		
-		  scale[0]=5;
-	  else if(ABS(err[0])<10)		
-		  scale[0]=10;
-    else 	
-		  scale[0]=15; 		
-
-	  if(ABS(err[1])<1)		
-		  scale[1]=1; 
-		else if(ABS(err[1])<2)		
-		  scale[1]=2; 
-		else if(ABS(err[1])<5)		
-		  scale[1]=5;
-	  else if(ABS(err[1])<10)		
-		  scale[1]=10;
-    else 	
-		  scale[1]=15;		
-		draw_err[0]=LIMIT(err[0],-scale[0],scale[0])/scale[0]*(123-22)/2;
-		draw_err[1]=LIMIT(err[1],-scale[1],scale[1])/scale[1]*(46-3)/2;
-		
-    GUI_Circle(70,25,3,1);//now  
-
-    GUI_CircleFill(70+draw_err[0],25+draw_err[1],2,1);//now  
-	 }//pos spd
-   else if(mode_rc[1]==1)//draw spd
+	 if(mode_rc[1]==1)//draw spd
 	 {
 		draw_err[0]=LIMIT(plane.mission.t_spd[0],-1,1)/1*(123-22)/2;
 		draw_err[1]=LIMIT(plane.mission.t_spd[1],-1,1)/1*(46-3)/2;
@@ -461,23 +443,57 @@ void OLED_TASK_MISSION(float dt)//任务界面
     GUI_Circle(70,25,3,1);//now  
     GUI_RectangleFill(70-2, 25, 70+2, 25+draw_err[1], 1);//y
     GUI_RectangleFill(70, 25+2, 70+draw_err[0], 25-2, 1);//x 
+	 }else//draw pos
+	 {
+		err[0]=plane.mission.t_pos[0]-plane.pos[0];
+		err[1]=plane.mission.t_pos[1]-plane.pos[1];
+		 
+		for(i=0;i<2;i++){ 
+		if(ABS(err[i])<5)		
+		  scale[i]=5; 
+		else if(ABS(err[i])<10)		
+		  scale[i]=10; 
+		else if(ABS(err[i])<20)		
+		  scale[i]=20;
+	  else if(ABS(err[i])<40)		
+		  scale[i]=40;
+    else 	
+		  scale[i]=40; 		
+	 }	 	
+
+		cy=cos(plane.att[2]*0.0173);	
+		sy=sin(plane.att[2]*0.0173);	
+		temp_err[0]= err[0]*cy - err[1]*sy;
+		temp_err[1]= err[0]*sy + err[1]*cy;
+		draw_err[0]=LIMIT(err[0],-scale[0],scale[0])/scale[0]*(123-24)/2;
+		draw_err[1]=LIMIT(err[1],-scale[1],scale[1])/scale[1]*(46-3)/2;
+    yaw_d[0]=8*sin(plane.att[2]*0.0173);
+	  yaw_d[1]=8*cos(plane.att[2]*0.0173);
+	  //draw gui
+    GUI_Circle(70,25,2,1);//now 
+    GUI_Line(70,25,70+yaw_d[0],25+yaw_d[1],1);//yaw
+    GUI_CircleFill(70+draw_err[0],25+draw_err[1],2,1);//now  
+	  GUI_Line(70,25,70+draw_err[0],25+draw_err[1],1);
 	 }
+
 	 
 	 if(mode_rc[2]==2)//draw height
 	 {
 		err[2]=plane.mission.t_pos[2]-plane.pos[2];
 		 
-		if(ABS(err[2])<1)		
-		  scale[2]=1; 
-		else if(ABS(err[2])<2)		
+		if(ABS(err[2])<2)		
 		  scale[2]=2; 
-		else if(ABS(err[2])<5)		
-		  scale[2]=5;
-	  else if(ABS(err[2])<10)		
-		  scale[2]=10;
+		else if(ABS(err[2])<6)		
+		  scale[2]=6; 
+		else if(ABS(err[2])<12)		
+		  scale[2]=12;
+	  else if(ABS(err[2])<30)		
+		  scale[2]=30;
     else 	
-		  scale[2]=15; 			
+		  scale[2]=30; 			
 		draw_err[2]=LIMIT(err[2],-scale[2],scale[2])/scale[2]*(43)/2;
+		
+		
     GUI_Circle(12,24,3,1);//now  
     GUI_Line(3, 24+draw_err[2], 20, 24+draw_err[2], 1);//set
 	 }else if(mode_rc[2]==1)//draw height
@@ -486,6 +502,11 @@ void OLED_TASK_MISSION(float dt)//任务界面
     GUI_Circle(12,24,3,1);//now  
 		GUI_RectangleFill(3, 24, 20, 24+draw_err[2], 1);
 	 }
+		//draw gui
+	GUI_Line(3,24+10,5,24+10,1);
+	GUI_Line(3,24-10,5,24-10,1);
+  GUI_Line(18,24+10,20,24+10,1);
+	GUI_Line(18,24-10,20,24-10,1); 	 
   OLED_Refresh_Gram(); 
 	//height scale
 	if(mode_rc[2]==2)//draw height
@@ -500,16 +521,7 @@ void OLED_TASK_MISSION(float dt)//任务界面
 	OLED_P6x8Str(25+12,3,"cm/s");
   }
 	
-	//pos scale
-	if(mode_rc[2]==2)//draw pos
-	{ 
-  my_itoa(scale[0],temp[0]);
-  OLED_P6x8Str(100,4,temp[0]);
-	OLED_P6x8Str(100+12,4,"m");
-	my_itoa(scale[1],temp[0]);
-  OLED_P6x8Str(60,3,temp[0]);
-	OLED_P6x8Str(60+12,3,"m");
-  }else if(mode_rc[2]==1)//draw pos spd
+  if(mode_rc[2]==1)//draw pos spd
 	{ 
 	my_itoa(plane.mission.t_spd[0]*10,temp[0]);
   OLED_P6x8Str(100,4,temp[0]);
@@ -518,34 +530,60 @@ void OLED_TASK_MISSION(float dt)//任务界面
   OLED_P6x8Str(60,3,temp[0]);
 	OLED_P6x8Str(60+12,3,"cm");
   }
+	else	//pos scale
+	{ 
+  my_itoa(scale[0],temp[0]);
+  OLED_P6x8Str(100,4,temp[0]);
+	OLED_P6x8Str(100+12,4,"m");
+		
+	my_itoa(scale[1],temp[0]);
+  OLED_P6x8Str(60,3,temp[0]);
+	OLED_P6x8Str(60+12,3,"m");
+		
+	OLED_P6x8Str(60,7,"Dis:");	
+	dis=my_sqrt(err[0]*err[0]+err[1]*err[1]);
+	my_itoa(dis,temp[0]);
+  OLED_P6x8Str(60+12+12,7,temp[0]);
+	OLED_P6x8Str(60+12+12+12,7,"m");	
+  } 
 	// draw word
-  OLED_P6x8Str(3,0,"Main:");
-  my_itoa(plane.mission.mains,temp[0]);
-  OLED_P6x8Str(36,0,temp[0]);
 
+  OLED_P6x8Str(3,0,"Main:");
+	switch(plane.mission.mains){
+	case 66:OLED_P6x8Str(36,0,"Miss");break;
+  case 22:OLED_P6x8Str(36,0,"Safe");break;
+  case 0:OLED_P6x8Str(36,0,"Idle");break;			
+  default:my_itoa(plane.mission.mains,temp[0]);
+  OLED_P6x8Str(36,0,temp[0]);
+	break;
+  }
   OLED_P6x8Str(3,1,"SubS:");
   my_itoa(plane.mission.subs,temp[0]);
   OLED_P6x8Str(36,1,temp[0]);
 
  
 
-   OLED_P6x8Str(3+3+55,0,"RC:");
+   OLED_P6x8Str(3+3+55+10,0,"RC:");
    if(mode_rc[0]==1)
-		 OLED_P6x8Str(36+55,0,"A");
+		 OLED_P6x8Str(36+55+5,0,"A");
 	 
 	  if(mode_rc[1]==2)
-		 OLED_P6x8Str(36+55+6,0,"P ");
+		 OLED_P6x8Str(36+55+6+5,0,"P ");
 		else if(mode_rc[1]==1)
-		 OLED_P6x8Str(36+55+6,0,"V ");
+		 OLED_P6x8Str(36+55+6+5,0,"V ");
 		
 		if(mode_rc[2]==2)
-		 OLED_P6x8Str(36+55+6*2,0,"H ");
+		 OLED_P6x8Str(36+55+6*2+5,0,"H ");
 		else if(mode_rc[2]==1)
-		 OLED_P6x8Str(36+55+6*2,0,"R");
+		 OLED_P6x8Str(36+55+6*2+5,0,"R");
 
-   OLED_P6x8Str(3+3+55,1,"Way:");
+   my_itoa(plane.bat,temp[5]);
+	 OLED_P6x8Str(36+66+10-6,0,temp[5]);
+	 OLED_P6x8Str(36+66+10+6,0,"%");
+		
+   OLED_P6x8Str(3+3+55+10,1,"Way:");
    my_itoa(plane.mission.wayps,temp[1]);
-	 OLED_P6x8Str(36+66,1,temp[1]);
+	 OLED_P6x8Str(36+66+10,1,temp[1]);
 
 		
 
@@ -593,7 +631,7 @@ int main(void)
   OLED_P6x8Str(3,5,"Channle:");
   my_itoa(CHANNAL,temp[0]);
   OLED_P6x8Str(50,5,temp[0]);
-	delay_ms(40000);
+	delay_ms(20000);
 	OLED_Fill(0x00);
 	Beep_Init(0,72-1);
 	Play_Music_Direct(START_BEEP);
@@ -633,8 +671,7 @@ int main(void)
 			Rc_Get.ROL=LIMIT(adc_rc.roll,1000,2000);
 			Rc_Get.YA=LIMIT(adc_rc.yaw,1000,2000);
 			Rc_Get.THROTTLE=LIMIT(adc_rc.thrust,1000,2000);
-			#if !USE_AS_MONITER
-			if(key_o[4]){
+			if(key_o[4]&&moniter_sel==0){
            key_sel_down++;
         }
 				if(key_sel_down>2/0.005){
@@ -645,7 +682,6 @@ int main(void)
 					  WRITE_PARM();
 					  Play_Music_Direct(RC_RESET_BEEP);				  
 				}
-			 #endif
        ANO_DT_Data_Exchange(); 	
 		 } 
   
@@ -699,9 +735,9 @@ int main(void)
 				else
 				{cnt_flag[5]=0;cnt_flag[7]=0;}
 				
-				if(cnt_flag[1]>1.2/0.05)
+				if(cnt_flag[1]>1/0.05)
 				{cnt_flag[1]=cnt_flag[2]=0;moniter_sel--;}	
-				if(cnt_flag[0]>1.2/0.05)
+				if(cnt_flag[0]>1/0.05)
 				{cnt_flag[0]=cnt_flag[3]=0;moniter_sel++;}	
 				//---------------------
 				if(cnt_flag[2]>0.1/0.05)
@@ -717,7 +753,7 @@ int main(void)
 					  cnt_flag[8]=0;
 					  sub_sel[2]=!sub_sel[2];
 				}
-				if(cnt_flag[9]>1.5/0.05&&moniter_sel!=0){
+				if(cnt_flag[9]>1.25/0.05&&moniter_sel!=0){
 					  cnt_flag[9]=0;
 					  for(i=0;i<18;i++)
 					    for(j=0;j<3;j++)
@@ -747,7 +783,6 @@ int main(void)
 					moniter_sel=6;
 				
 			//change data
-			
 			if(sub_sel[1]<3)	
 				sub_page=sub_sel[1];
 			else
@@ -762,7 +797,7 @@ int main(void)
 			if(sub_sel[0]==1&&sub_sel[1]>3)
 				 page=3;
 			
-			pid_sel[0]=LIMIT((moniter_sel-1)*4+page,0,17);
+			pid_sel[0]=LIMIT((moniter_sel-1)*4+page,0,20);
 			pid_sel[1]=LIMIT(sub_page,0,2);
 					
 			if(sub_sel[2]){	
@@ -778,27 +813,27 @@ int main(void)
 			 break;
 			 case 1:
 				 OLED_TASK_PID1(0.05); OLED_TASK_SUB_SEL(0.05);
-         if(cnt_get_data++>3.5/0.05)
+         if(cnt_get_data++>2.5/0.05)
 				  {cnt_get_data=0;plane.read_pid=1;}					 
 			 break;
 			 case 2:
 				 OLED_TASK_PID2(0.05); OLED_TASK_SUB_SEL(0.05);
-         if(cnt_get_data++>3.5/0.05)
+         if(cnt_get_data++>2.5/0.05)
 				  {cnt_get_data=0;plane.read_pid=1;}					 
 			 break;	
 			case 3:
 				OLED_TASK_PID3(0.05); OLED_TASK_SUB_SEL(0.05);
-				if(cnt_get_data++>3.5/0.05)
+				if(cnt_get_data++>2.5/0.05)
 				{cnt_get_data=0;plane.read_pid=1;}					 
 			break;	
 			case 4:
 				OLED_TASK_PID4(0.05); OLED_TASK_SUB_SEL(0.05);
-				if(cnt_get_data++>3.5/0.05)
+				if(cnt_get_data++>2.5/0.05)
 				{cnt_get_data=0;plane.read_pid=1;}					 
 			break;	
 			case 5:
 				OLED_TASK_PID5(0.05); OLED_TASK_SUB_SEL(0.05);
-				if(cnt_get_data++>3.5/0.05)
+				if(cnt_get_data++>2.5/0.05)
 				{cnt_get_data=0;plane.read_pid=1;}					 
 			break;
       case 6:

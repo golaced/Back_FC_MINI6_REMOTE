@@ -141,8 +141,8 @@ struct _plane{
 	float spd[3];
 	float pos[3];
 	u8 lock,mode,state_v,acc3d_step,bat,read_pid;
-	int PID[18][3];
-	int PID_RX[18][3];
+	int PID[20][3];
+	int PID_RX[20][3];
 	int rc_lost_cnt,rssi;
 	u8 gps_sv,acc_cal,acc_3d_cal,gyro_cal,mag_cal,pos_sensor_state;
 	struct Module module;

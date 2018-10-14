@@ -104,7 +104,7 @@ u8 temp;
     plane.mission.mains= NRF24L01_RXDATA[19];
 		plane.mission.subs= NRF24L01_RXDATA[20];
 		plane.mission.smarts= NRF24L01_RXDATA[21];
-		plane.mission.wayps= NRF24L01_RXDATA[2];
+		plane.mission.wayps= NRF24L01_RXDATA[22];
   }
 		else if(NRF24L01_RXDATA[0]==0x03)//send3								
 	{ 

@@ -35,6 +35,7 @@
 ..\..\Output\main.o: ..\..\User\FLASH.h
 ..\..\Output\main.o: ..\..\User\imu.h
 ..\..\Output\main.o: ..\..\User\mymath.h
+..\..\Output\main.o: d:\Keil_v4\ARM\ARMCC\bin\..\include\math.h
 ..\..\Output\main.o: ..\..\User\rc_mine.h
 ..\..\Output\main.o: ..\..\User\gui_basic.h
 ..\..\Output\main.o: ..\..\User\USB\CONFIG\hw_config.h

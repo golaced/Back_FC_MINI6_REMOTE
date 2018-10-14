@@ -17,3 +17,17 @@
 ..\..\Output\flash.o: ..\..\Libraries\FWlib\inc\stm32f10x_flash.h
 ..\..\Output\flash.o: ..\..\User\FLASH.h
 ..\..\Output\flash.o: ..\..\User\imu.h
+..\..\Output\flash.o: ..\..\User\rc_mine.h
+..\..\Output\flash.o: ..\..\User\head.h
+..\..\Output\flash.o: ..\..\User\oled_config.h
+..\..\Output\flash.o: ..\..\User\usart\usart.h
+..\..\Output\flash.o: d:\Keil_v4\ARM\ARMCC\bin\..\include\stdio.h
+..\..\Output\flash.o: ..\..\User\usart\usart_config.h
+..\..\Output\flash.o: ..\..\Libraries\FWlib\inc\stm32f10x_dma.h
+..\..\Output\flash.o: ..\..\User\beep.h
+..\..\Output\flash.o: ..\..\Libraries\FWlib\inc\stm32f10x_tim.h
+..\..\Output\flash.o: ..\..\User\time.h
+..\..\Output\flash.o: ..\..\User\usart\delay.h
+..\..\Output\flash.o: ..\..\User\ff.h
+..\..\Output\flash.o: ..\..\User\integer.h
+..\..\Output\flash.o: ..\..\User\ffconf.h
