@@ -179,7 +179,7 @@
           <Type>0</Type>
           <LineNumber>63</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134240118</Address>
+          <Address>134240498</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -443,6 +443,26 @@
           <count>19</count>
           <WinNumber>2</WinNumber>
           <ItemText>\\Template\../../User/rc_mine.c\plane.att</ItemText>
+        </Ww>
+        <Ww>
+          <count>20</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>CHANNAL,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>21</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>mode_rc,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>22</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>ts,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>23</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>\\Template\../../User/rc_mine.c\plane.module,0x0A</ItemText>
         </Ww>
       </WatchWindow2>
       <DebugFlag>
@@ -931,10 +951,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>20</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>430</TopLine>
-      <CurrentLine>698</CurrentLine>
+      <TopLine>460</TopLine>
+      <CurrentLine>731</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -1085,8 +1105,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>320</TopLine>
+      <CurrentLine>325</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\mpu9250.c</PathWithFileName>
       <FilenameWithoutPath>mpu9250.c</FilenameWithoutPath>
@@ -1147,10 +1167,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>13</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>176</TopLine>
-      <CurrentLine>185</CurrentLine>
+      <TopLine>179</TopLine>
+      <CurrentLine>186</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\mymath.c</PathWithFileName>
       <FilenameWithoutPath>mymath.c</FilenameWithoutPath>
@@ -1163,10 +1183,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>27</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>143</TopLine>
+      <CurrentLine>149</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\FLASH.c</PathWithFileName>
       <FilenameWithoutPath>FLASH.c</FilenameWithoutPath>
@@ -1179,10 +1199,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>10</ColumnNumber>
+      <ColumnNumber>3</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>17</TopLine>
-      <CurrentLine>18</CurrentLine>
+      <TopLine>60</TopLine>
+      <CurrentLine>75</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\rc_mine.c</PathWithFileName>
       <FilenameWithoutPath>rc_mine.c</FilenameWithoutPath>
@@ -1205,8 +1225,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>487</TopLine>
-      <CurrentLine>494</CurrentLine>
+      <TopLine>1104</TopLine>
+      <CurrentLine>1128</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\OLED\oled.c</PathWithFileName>
       <FilenameWithoutPath>oled.c</FilenameWithoutPath>
@@ -1221,8 +1241,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>21</TopLine>
-      <CurrentLine>22</CurrentLine>
+      <TopLine>81</TopLine>
+      <CurrentLine>91</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\gui_basic.c</PathWithFileName>
       <FilenameWithoutPath>gui_basic.c</FilenameWithoutPath>
@@ -1333,8 +1353,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>80</TopLine>
+      <CurrentLine>85</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\USB\CONFIG\usb_istr.c</PathWithFileName>
       <FilenameWithoutPath>usb_istr.c</FilenameWithoutPath>

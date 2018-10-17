@@ -179,7 +179,7 @@
           <Type>0</Type>
           <LineNumber>63</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134240362</Address>
+          <Address>134240978</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -453,6 +453,26 @@
           <count>21</count>
           <WinNumber>2</WinNumber>
           <ItemText>mode_rc,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>22</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>ts,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>23</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>\\Template\../../User/rc_mine.c\plane.module,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>24</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>dt</ItemText>
+        </Ww>
+        <Ww>
+          <count>25</count>
+          <WinNumber>2</WinNumber>
+          <ItemText>time_fly</ItemText>
         </Ww>
       </WatchWindow2>
       <DebugFlag>
@@ -759,8 +779,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>0</TopLine>
-      <CurrentLine>0</CurrentLine>
+      <TopLine>374</TopLine>
+      <CurrentLine>380</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\Libraries\FWlib\src\stm32f10x_gpio.c</PathWithFileName>
       <FilenameWithoutPath>stm32f10x_gpio.c</FilenameWithoutPath>
@@ -941,10 +961,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>22</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>375</TopLine>
-      <CurrentLine>643</CurrentLine>
+      <TopLine>372</TopLine>
+      <CurrentLine>630</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -1095,8 +1115,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>318</TopLine>
-      <CurrentLine>325</CurrentLine>
+      <TopLine>382</TopLine>
+      <CurrentLine>400</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\mpu9250.c</PathWithFileName>
       <FilenameWithoutPath>mpu9250.c</FilenameWithoutPath>
@@ -1173,10 +1193,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>39</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>158</TopLine>
-      <CurrentLine>182</CurrentLine>
+      <TopLine>144</TopLine>
+      <CurrentLine>149</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\FLASH.c</PathWithFileName>
       <FilenameWithoutPath>FLASH.c</FilenameWithoutPath>
@@ -1189,10 +1209,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>3</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1</TopLine>
-      <CurrentLine>9</CurrentLine>
+      <TopLine>68</TopLine>
+      <CurrentLine>75</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\rc_mine.c</PathWithFileName>
       <FilenameWithoutPath>rc_mine.c</FilenameWithoutPath>
@@ -1231,8 +1251,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1</TopLine>
-      <CurrentLine>22</CurrentLine>
+      <TopLine>74</TopLine>
+      <CurrentLine>76</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\gui_basic.c</PathWithFileName>
       <FilenameWithoutPath>gui_basic.c</FilenameWithoutPath>
@@ -1343,7 +1363,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>78</TopLine>
+      <TopLine>81</TopLine>
       <CurrentLine>85</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\User\USB\CONFIG\usb_istr.c</PathWithFileName>

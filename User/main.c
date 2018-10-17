@@ -17,9 +17,10 @@
 #define USE_AS_MONITER 1
 MODULE module;
 u8 CHANNAL=44;
-
+float time_fly[5]={0,0,0,0,2.68};
 int moniter_sel=0;
 int sub_sel[3]={0};
+int ts[4];
 void OLED_TASK(float dt)//状态界面0
 {
 	 static int cx,cy;
@@ -27,6 +28,21 @@ void OLED_TASK(float dt)//状态界面0
    //GUI_RectangleFill(42,1,123,55,0);
    GUI_RectangleFill(1,1,123,55,0);
    GUI_Rectangle(42,1,123,55,1);
+ 
+   if(plane.module.gps)
+		GUI_RectangleFill(115,40,120,45,1);
+   else
+		GUI_Rectangle(115,40,120,45,1); 
+	 
+	  if(plane.module.flow)
+		GUI_RectangleFill(115,38,120,33,1);
+   else
+		GUI_Rectangle(115,38,120,33,1); 
+	 
+	  if(plane.module.vision)
+		GUI_RectangleFill(115,31,120,26,1);
+   else
+		GUI_Rectangle(115,31,120,26,1); 
    #if USE_AS_MONITER
    if(DEBUG[6]!=0&&DEBUG[7]!=0){
    cx=LIMIT(80+(DEBUG[6]-120)*0.35,42+3,123-3);
@@ -146,6 +162,14 @@ void OLED_TASK(float dt)//状态界面0
 		OLED_P6x8Str(45+3*8*2,7,"Z:");
 	  my_itoa(plane.pos[2],temp[6]);
 	  OLED_P6x8Str(45+3*8*2+3*3,7,temp[6]);
+		
+		//fly time
+	  my_itoa(time_fly[0],temp[6]);
+	  OLED_P6x8Str(45,6,temp[6]);
+		OLED_P6x8Str(45+3*3+3,6,":");
+		
+	  my_itoa(time_fly[1],temp[6]);
+	  OLED_P6x8Str(45+3*3+3*3,6,temp[6]);
 }
 
 float set[10]=0;
@@ -434,6 +458,22 @@ void OLED_TASK_MISSION(float dt)//任务界面
    GUI_RectangleFill(1,1,123,55,0);
 	 GUI_Rectangle(3,3,20,46,1);
 	 GUI_Rectangle(22,3,123,46,1);
+
+	 if(plane.module.gps)
+		GUI_RectangleFill(115,40,120,45,1);
+   else
+		GUI_Rectangle(115,40,120,45,1); 
+	 
+	  if(plane.module.flow)
+		GUI_RectangleFill(115,38,120,33,1);
+   else
+		GUI_Rectangle(115,38,120,33,1); 
+	 
+	  if(plane.module.vision)
+		GUI_RectangleFill(115,31,120,26,1);
+   else
+		GUI_Rectangle(115,31,120,26,1); 
+	 
 	//mission
 	 if(mode_rc[1]==1)//draw spd
 	 {
@@ -533,18 +573,18 @@ void OLED_TASK_MISSION(float dt)//任务界面
 	else	//pos scale
 	{ 
   my_itoa(scale[0],temp[0]);
-  OLED_P6x8Str(100,4,temp[0]);
-	OLED_P6x8Str(100+12,4,"m");
+  OLED_P6x8Str(100-12,4,temp[0]);
+	OLED_P6x8Str(100,4,"m");
 		
 	my_itoa(scale[1],temp[0]);
   OLED_P6x8Str(60,3,temp[0]);
 	OLED_P6x8Str(60+12,3,"m");
 		
-	OLED_P6x8Str(60,7,"Dis:");	
+	OLED_P6x8Str(60+22,7,"Dis:");	
 	dis=my_sqrt(err[0]*err[0]+err[1]*err[1]);
 	my_itoa(dis,temp[0]);
-  OLED_P6x8Str(60+12+12,7,temp[0]);
-	OLED_P6x8Str(60+12+12+12,7,"m");	
+  OLED_P6x8Str(60+12+12+22,7,temp[0]);
+	OLED_P6x8Str(60+12+12+12+22,7,"m");	
   } 
 	// draw word
 
@@ -585,7 +625,13 @@ void OLED_TASK_MISSION(float dt)//任务界面
    my_itoa(plane.mission.wayps,temp[1]);
 	 OLED_P6x8Str(36+66+10,1,temp[1]);
 
-		
+	//fly time
+	my_itoa(time_fly[0],temp[6]);
+	OLED_P6x8Str(45-22,7,temp[6]);
+	OLED_P6x8Str(45+3*3+3-22,7,":");
+	
+	my_itoa(time_fly[1],temp[6]);
+	OLED_P6x8Str(45+3*3+3*3-22,7,temp[6]);	
 
 }
 
@@ -605,7 +651,7 @@ int main(void)
 {	u8 i,j;
 	static u16 cnt_flag[10];
 	char temp[10][20]={'\0'};
-  static u8 moniter_reg;
+  static u8 moniter_reg,fly_reg;
   static int cnt_get_data;
 	u8 pid_sel[2],page,sub_page;
 
@@ -617,10 +663,10 @@ int main(void)
 	USART_init();	
 	Adc_Init();
 	SPI1_Init();		
+	Parameter_Init();
 	Nrf24l01_Init(MODEL_TX2,CHANNAL);// 伪双工  主接收
 	Nrf24l01_Check();
 	Mpu9250_Init();
-	Parameter_Init();
   keyInit(); 
 	OLED_Fill(0x00);OLED_P6x8Str(3,0,"By Golaced-BIT ");OLED_P8x16Str(43,3,"Welcome!");
 	if(module.nrf)
@@ -654,7 +700,7 @@ int main(void)
 			MPU9250_ReadValue();
 			MPU6050_Data_Prepare(dt[0]);
 		 } 
-		
+		 
      if(flag_ms[5]==1)
 		 {
       flag_ms[5]=0;
@@ -712,8 +758,21 @@ int main(void)
 		 {
 			dt[5] = Get_Cycle_T(5)/1000000.0f;	   
       flag_ms[50]=0;
-			 
-			 
+			if(fly_reg==0&&plane.lock)
+			{time_fly[3]=1;time_fly[0]=time_fly[1]=time_fly[2]=0;}
+			if(fly_reg==1&&plane.lock==0)
+				time_fly[3]=0;
+			fly_reg=plane.lock;
+			if(time_fly[3])
+				time_fly[2]+=dt[5]*time_fly[4];
+			if(time_fly[2]>1){
+				time_fly[1]+=time_fly[2];
+			  time_fly[2]-=1;
+		  }
+			if(time_fly[1]>60){
+				time_fly[0]++;time_fly[1]-=60;
+			} 
+			
 			#if USE_AS_MONITER 
 			  if(Rc_Get.YA>1800)
 				{cnt_flag[0]++;cnt_flag[2]++;}
